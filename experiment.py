@@ -1,6 +1,6 @@
 class Experiment():
 
-    def __init__(self, time, tow1, tow2, tow3, tow4, tow5, tow6, tow7, tow8):
+    def __init__(self, time, **kwargs):
         '''
         Experiment class used to store and process data for each experiment.
 
@@ -14,15 +14,21 @@ class Experiment():
             numpy.array(float64) tow6 -> temperature data of tow 6 in degrees Celsius
             numpy.array(float64) tow7 -> temperature data of tow 7 in degrees Celsius
             numpy.array(float64) tow8 -> temperature data of tow 8 in degrees Celsius
-        ''' 
 
+            If the class is used to store data from the rear camera,
+            the tow variables become multidimensional arrays holding
+            the temperature history of each line as a sub-array.
+
+        version date: 07.03.2020
+        '''
+        
         self.time = time
-        self.tow1 = tow1
-        self.tow2 = tow2
-        self.tow3 = tow3
-        self.tow4 = tow4
-        self.tow5 = tow5
-        self.tow6 = tow6
-        self.tow7 = tow7
-        self.tow8 = tow8
-
+        self.tow1 = kwargs.get('tow1')
+        self.tow2 = kwargs.get('tow2')
+        self.tow3 = kwargs.get('tow3')
+        self.tow4 = kwargs.get('tow4')
+        self.tow5 = kwargs.get('tow5')
+        self.tow6 = kwargs.get('tow6')
+        self.tow7 = kwargs.get('tow7')
+        self.tow8 = kwargs.get('tow8')
+            

@@ -16,6 +16,16 @@ y(x) = a*b**x'''
     print(a, b)
     return lambda x: a*b**x
 
+def exp_lin_regression(x, y, p0=None):
+    '''Accepts two lists of x and y values of the data points
+Returns the parameters np.array([a, b]) of the expression
+y(x) = a*b**x + c'''
+    x = np.array(x)
+    y = np.array(y)
+    (a, b, c), covariance = optimize.curve_fit(lambda t,a,b,c: a*b**x+c, x, y, p0=p0)
+    print(a, b, c)
+    return lambda x: a*b**x+c
+
 
 if __name__ == '__main__':
     from matplotlib import pyplot as plt

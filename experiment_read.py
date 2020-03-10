@@ -51,14 +51,14 @@ def generate_front(file_number):
 def generate_back(file_number):
     data = pd.read_csv(rear[file_number], header=None)
     reltime = data[data.columns[0]].to_numpy()
-    _tow1 = [data[data.columns[1 + 8 * i]].to_numpy() for i in range(10)]
-    _tow2 = [data[data.columns[2 + 8 * i]].to_numpy() for i in range(10)]
-    _tow3 = [data[data.columns[3 + 8 * i]].to_numpy() for i in range(10)]
-    _tow4 = [data[data.columns[4 + 8 * i]].to_numpy() for i in range(10)]
-    _tow5 = [data[data.columns[5 + 8 * i]].to_numpy() for i in range(10)]
-    _tow6 = [data[data.columns[6 + 8 * i]].to_numpy() for i in range(10)]
-    _tow7 = [data[data.columns[7 + 8 * i]].to_numpy() for i in range(10)]
-    _tow8 = [data[data.columns[8 + 8 * i]].to_numpy() for i in range(10)]
+    _tow1 = np.array([data[data.columns[1 + 8 * i]].to_numpy() for i in range(10)])
+    _tow2 = np.array([data[data.columns[2 + 8 * i]].to_numpy() for i in range(10)])
+    _tow3 = np.array([data[data.columns[3 + 8 * i]].to_numpy() for i in range(10)])
+    _tow4 = np.array([data[data.columns[4 + 8 * i]].to_numpy() for i in range(10)])
+    _tow5 = np.array([data[data.columns[5 + 8 * i]].to_numpy() for i in range(10)])
+    _tow6 = np.array([data[data.columns[6 + 8 * i]].to_numpy() for i in range(10)])
+    _tow7 = np.array([data[data.columns[7 + 8 * i]].to_numpy() for i in range(10)])
+    _tow8 = np.array([data[data.columns[8 + 8 * i]].to_numpy() for i in range(10)])
     return Experiment(reltime, tow1=_tow1, tow2=_tow2, tow3=_tow3,
                       tow4=_tow4, tow5=_tow5, tow6=_tow6, tow7=_tow7, tow8=_tow8)
 

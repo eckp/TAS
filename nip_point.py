@@ -28,12 +28,9 @@ from matplotlib import pyplot as plt
         4.- For a certain compaction Force plot the temperature history of the tows in different plots.
 
         5.- We do the same things as before, but with averaged temperatures of the four tows.
-
-
 """
 
 """
-
     Nice features for the plots:
 
         plt.xlabel(r"time [s]", size = 15)
@@ -49,8 +46,6 @@ from matplotlib import pyplot as plt
         plt.minorticks_on()
         plt.grid(b=True, which='major', color='#bebebe', linestyle='-')
         plt.grid(b=True, which='minor', color='#e9e9e9', linestyle='-', linewidth=0.5)
-        
-
 """
 
 
@@ -66,11 +61,18 @@ front_exp_7 = generate_front(6) #       1750 W  |       100  N
 front_exp_8 = generate_front(7) #       1750 W  |       500  N 
 front_exp_9 = generate_front(8) #       1750 W  |       1000 N
 
-# 0.- Plot it all!!:
+# Plotting Styles:
+
+linestyle_tow_1 = 'solid'
+linestyle_tow_3 = 'dashed'
+linestyle_tow_5 = 'dotted'
+linestyle_tow_7 = 'dashdot'
+
+# 0.- Plot it all:
 
 for i in range(1,10):
     for j in range(4):
-        plt.plot(eval(f"front_exp_{i}.time"), eval(f"front_exp_{i}.tow{2 * j + 1}"), label = (f"Experiment {i}, Tow {2 * j + 1}"))
+        plt.plot(eval(f"front_exp_{i}.time"), eval(f"front_exp_{i}.tow{2 * j + 1}"), label = (f"Experiment {i}, Tow {2 * j + 1}"), linestyle = eval(f"linestyle_tow_{2 * j + 1}"))
         
 plt.xlabel(r"time [s]", size = 15)
 plt.ylabel(r"Temperature [$^\circ C$]", size = 15)

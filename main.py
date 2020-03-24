@@ -15,5 +15,5 @@ for i, exp in enumerate(exp_back[::1]):
     #print(list(zip(x,y)))
     plt.plot(x, y, c=colors[i])
     #plt.plot(x, exp_regression(x, y)(x), c=colors[i], linestyle='--')
-    plt.plot(x, exp_lin_regression(x, y, p0=(y[0]-y[-1], 0.8, y[-1]))(x), c=colors[i], linestyle=':')
+    plt.plot(x, exp_lin_regression(x, y, p0=(y[0]-y[-1], 0.8, y[-1]))[0](x), c=colors[i], linestyle=':')
 plt.show()

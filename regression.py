@@ -1,12 +1,12 @@
-'''Provides functions that fit exponential curves to a given set of data points.'''
+'''Provide functions that fit exponential curves to a given set of data points.'''
 
 import numpy as np
 from scipy import optimize
 
 def exp_regression(x, y, p0=None):
-    '''Accepts two lists of x and y values of the data points,
+    '''Accept two lists of x and y values of the data points,
     with an optional list of initial guesses for the parameters.
-    Returns the fitted function y(x) = a*b**x and the parameters for later use'''
+    Return the fitted function y(x) = a*b**x and the parameters for later use'''
     x = np.array(x)
     y = np.array(y)
     (a, b), covariance = optimize.curve_fit(lambda t,a,b: a*b**x, x, y, p0=p0)
@@ -15,9 +15,9 @@ def exp_regression(x, y, p0=None):
     return func, (a, b)
 
 def exp_lin_regression(x, y, p0=None):
-    '''Accepts two lists of x and y values of the data points,
+    '''Accept two lists of x and y values of the data points,
     with an optional list of initial guesses for the parameters.
-    Returns the fitted function y(x) = a*b**x + c and the parameters for later use'''
+    Return the fitted function y(x) = a*b**x + c and the parameters for later use'''
     x = np.array(x)
     y = np.array(y)
     (a, b, c), covariance = optimize.curve_fit(lambda t,a,b,c: a*b**x+c, x, y, p0=p0)
@@ -25,6 +25,18 @@ def exp_lin_regression(x, y, p0=None):
     func = lambda x_: a*b**x_+c
     return func, (a, b, c)
 
+
+def cooling_rate(experiments):
+    '''Accept a list of experiments with one list of timestamps and n tows per experiment,
+    where the tow is a list of the temperature values of a point (averaged or just a sample).
+    Return a list of the cooling rate per tow per experiment.'''
+    cooling_rates = np.empty((len(experiments), len(experiments[0].samples)))
+    for i, experiment in enumerate(experiments):
+        t = np.arange(0,10)  # number of lines per tow
+        for j, tow in enumerate(experiment.samples):
+            print(tow)
+            cooling_rates[i,j] = exp_lin_regression(t, tow, p0=(tow[0]-tow[-1], 0.9, tow[-1]))[1][1]
+    return cooling_rates
 
 if __name__ == '__main__':
     from matplotlib import pyplot as plt

@@ -70,19 +70,125 @@ linestyle_tow_7 = 'dashdot'
 
 # 0.- Plot it all:
 
-for i in range(1,10):
+for i in range(4):
+    for j in range(1,4):
+        plt.subplot(221+i)
+        plt.plot(eval(f"front_exp_{j}.time"), eval(f"front_exp_{j}.tow{2 * i + 1}"), label = (f"Experiment {j}, Tow {2 * i + 1}"), linestyle = eval(f"linestyle_tow_{2 * i + 1}"))
+
+
+        plt.title("Same power setting 1300W")        
+        plt.xlabel(r"time [s]", size = 15)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.box()
+        plt.legend(loc="best", fancybox = True, shadow = True)
+        plt.axhline(y=0, color='k', linewidth=0.75)
+        plt.axvline(x=0, color='k', linewidth=0.75)
+        plt.minorticks_on()
+        plt.grid(b=True, which='major', color='#bebebe', linestyle='-')
+        plt.grid(b=True, which='minor', color='#e9e9e9', linestyle='-', linewidth=0.5)
+plt.show()
+
+
+
+
+for i in range(4):
+    for j in range(4,7):
+        plt.subplot(221+i)
+        plt.plot(eval(f"front_exp_{j}.time"), eval(f"front_exp_{j}.tow{2 * i + 1}"), label = (f"Experiment {j}, Tow {2 * i + 1}"), linestyle = eval(f"linestyle_tow_{2 * i + 1}"))
+
+
+        plt.title("Same power setting 1500 W")        
+        plt.xlabel(r"time [s]", size = 15)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.box()
+        plt.legend(loc="best", fancybox = True, shadow = True)
+        plt.axhline(y=0, color='k', linewidth=0.75)
+        plt.axvline(x=0, color='k', linewidth=0.75)
+        plt.minorticks_on()
+        plt.grid(b=True, which='major', color='#bebebe', linestyle='-')
+        plt.grid(b=True, which='minor', color='#e9e9e9', linestyle='-', linewidth=0.5)
+
+plt.show()
+
+
+
+for i in range(4):
     for j in range(4):
-        plt.plot(eval(f"front_exp_{i}.time"), eval(f"front_exp_{i}.tow{2 * j + 1}"), label = (f"Experiment {i}, Tow {2 * j + 1}"), linestyle = eval(f"linestyle_tow_{2 * j + 1}"))
-        
-plt.xlabel(r"time [s]", size = 15)
-plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
-plt.box()
-plt.legend(loc="best", fancybox = True, shadow = True)
-plt.axhline(y=0, color='k', linewidth=0.75)
-plt.axvline(x=0, color='k', linewidth=0.75)
-plt.minorticks_on()
-plt.grid(b=True, which='major', color='#bebebe', linestyle='-')
-plt.grid(b=True, which='minor', color='#e9e9e9', linestyle='-', linewidth=0.5)
+        plt.subplot(221+i)
+        plt.plot(eval(f"front_exp_{3*j}.time"), eval(f"front_exp_{j}.tow{2 * i + 1}"), label = (f"Experiment {j}, Tow {2 * i + 1}"), linestyle = eval(f"linestyle_tow_{2 * i + 1}"))
+
+
+        plt.title("Same power setting 1750 W")        
+        plt.xlabel(r"time [s]", size = 15)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.box()
+        plt.legend(loc="best", fancybox = True, shadow = True)
+        plt.axhline(y=0, color='k', linewidth=0.75)
+        plt.axvline(x=0, color='k', linewidth=0.75)
+        plt.minorticks_on()
+        plt.grid(b=True, which='major', color='#bebebe', linestyle='-')
+        plt.grid(b=True, which='minor', color='#e9e9e9', linestyle='-', linewidth=0.5)
+
+plt.show()
+
+
+for i in range(4):
+    for j in range(3):
+        plt.subplot(221+i)
+        plt.plot(eval(f"front_exp_{3*j+1}.time"), eval(f"front_exp_{j}.tow{2 * i + 1}"), label = (f"Experiment {3*j+1}, Tow {2 * i + 1}"), linestyle = eval(f"linestyle_tow_{2 * i + 1}"))
+
+
+        plt.title("Same force setting 100 N")        
+        plt.xlabel(r"time [s]", size = 15)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.box()
+        plt.legend(loc="best", fancybox = True, shadow = True)
+        plt.axhline(y=0, color='k', linewidth=0.75)
+        plt.axvline(x=0, color='k', linewidth=0.75)
+        plt.minorticks_on()
+        plt.grid(b=True, which='major', color='#bebebe', linestyle='-')
+        plt.grid(b=True, which='minor', color='#e9e9e9', linestyle='-', linewidth=0.5)
+
+plt.show()
+
+
+for i in range(4):
+    for j in range(3):
+        plt.subplot(221+i)
+        plt.plot(eval(f"front_exp_{3*j+2}.time"), eval(f"front_exp_{j}.tow{2 * i + 1}"), label = (f"Experiment {3*j+2}, Tow {2 * i + 1}"), linestyle = eval(f"linestyle_tow_{2 * i + 1}"))
+
+
+        plt.title("Same force setting 500 N")        
+        plt.xlabel(r"time [s]", size = 15)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.box()
+        plt.legend(loc="best", fancybox = True, shadow = True)
+        plt.axhline(y=0, color='k', linewidth=0.75)
+        plt.axvline(x=0, color='k', linewidth=0.75)
+        plt.minorticks_on()
+        plt.grid(b=True, which='major', color='#bebebe', linestyle='-')
+        plt.grid(b=True, which='minor', color='#e9e9e9', linestyle='-', linewidth=0.5)
+
+plt.show()
+
+
+
+for i in range(4):
+    for j in range(1,4):
+        plt.subplot(221+i)
+        plt.plot(eval(f"front_exp_{3*j}.time"), eval(f"front_exp_{j}.tow{2 * i + 1}"), label = (f"Experiment {3*j}, Tow {2 * i + 1}"), linestyle = eval(f"linestyle_tow_{2 * i + 1}"))
+
+
+        plt.title("Same force setting 1000 N")        
+        plt.xlabel(r"time [s]", size = 15)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.box()
+        plt.legend(loc="best", fancybox = True, shadow = True)
+        plt.axhline(y=0, color='k', linewidth=0.75)
+        plt.axvline(x=0, color='k', linewidth=0.75)
+        plt.minorticks_on()
+        plt.grid(b=True, which='major', color='#bebebe', linestyle='-')
+        plt.grid(b=True, which='minor', color='#e9e9e9', linestyle='-', linewidth=0.5)
 
 plt.show()
 

@@ -1,11 +1,7 @@
 '''generating the final graphs which should summarize all data'''
 import numpy as np
 from matplotlib import pyplot as plt
-
-# Experiment parameters
-experiment_params = np.array([[1300, 100],[1300, 500],[1300, 1000],\
-                              [1500, 100],[1500, 500],[1500, 1000],\
-                              [1750, 100],[1750, 500],[1750, 1000]])
+from data import experiment_params
 
 def final_graph(cooling_rate, n_exp):
     '''Accepts cooling rate and tow number (0-3) to generate a graph

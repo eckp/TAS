@@ -7,8 +7,12 @@ experiment_params = np.array([[1300, 100],[1300, 500],[1300, 1000],\
                               [1500, 100],[1500, 500],[1500, 1000],\
                               [1750, 100],[1750, 500],[1750, 1000]])
 
-# Function to make graphs
 def final_graph(cooling_rate, n_exp):
+    '''Accepts cooling rate and tow number (0-3) to generate a graph
+    with compaction force, laser power and cooling rate combined.
+    Returns the matrix with graph data, where the compaction force is
+    held constant throughout the columns and laser power throughout rows.'''
+    
     graph_data = np.empty((3,3))
     n_points = len(experiment_params[:,0])
     xgraph = []

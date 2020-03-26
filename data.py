@@ -1,3 +1,4 @@
+import numpy as np
 '''File containing some handy data that will probably be used by multiple scripts'''
 
 # Experiment parameters (laser power, compaction force)

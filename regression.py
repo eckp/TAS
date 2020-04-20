@@ -14,16 +14,16 @@ def exp_regression(x, y, p0=None):
     func = lambda x_: a*b**x_
     return func, (a, b)
 
-def exp_lin_regression(x, y, p0=None):
+def exp_offset_regression(x, y, p0=None):
     '''Accept two lists of x and y values of the data points,
     with an optional list of initial guesses for the parameters.
-    Return the fitted function y(x) = y_lim + (y0-y_lim)*e**(-k*x) and the parameters for later use'''
+    Return the fitted function y(x) = a*b**x + c and the parameters for later use'''
     x = np.array(x)
     y = np.array(y)
-    (y0, y_lim, k), covariance = optimize.curve_fit(lambda t,y0,y_lim,k: y_lim+(y0-y_lim)*np.e**(-k*t), x, y, p0=p0)
-    print(y0, y_lim, k)
-    func = lambda x_: y_lim+(y0-y_lim)*np.e**(-k*x_)
-    return func, (y0, y_lim, k)
+    (a, b, c), covariance = optimize.curve_fit(lambda t,a,b,c: a*b**x+c, x, y, p0=p0)
+    print(a, b, c)
+    func = lambda x_: a*b**x_+c
+    return func, (a, b, c)
 
 
 def cooling_rate(temperature_histories, time_map):
@@ -42,7 +42,8 @@ def cooling_rate(temperature_histories, time_map):
         t = time_map  # time offset of each measurement from the first measurement line
         for j, tow in enumerate(experiment):
             print(tow)
-            cooling_rates[i,j] = exp_lin_regression(t, tow, p0=(tow[0]-tow[-1], 0.9, tow[-1]))[1][2]
+            curve_parameters = exp_offset_regression(t, tow, p0=(tow[0]-tow[-1], 0.9, tow[-1]))[1]
+            cooling_rates[i,j] = -np.log(curve_parameters[1])
     return cooling_rates
 
 if __name__ == '__main__':
@@ -54,7 +55,7 @@ if __name__ == '__main__':
     plt.plot(x, y, label=f'original: y(x) = {a}*{b}**x+{c}')
     y_noised = y + np.random.normal(size=x.size)
     plt.plot(x, y_noised, label='original + noise')
-    regress = exp_lin_regression(x, y_noised)
+    regress = exp_offset_regression(x, y_noised)
     y_regressed = regress[0](x)
     plt.plot(x, y_regressed, label=f'regressed: y(x) = {round(regress[1][0], 2)}*{round(regress[1][1], 2)}**x+{round(regress[1][2], 2)}')
     #plt.annotate(f'y(x) = {round(regress[1][0], 2)}*{round(regress[1][1], 2)}**x+{round(regress[1][2], 2)}',

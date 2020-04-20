@@ -17,13 +17,13 @@ def exp_regression(x, y, p0=None):
 def exp_lin_regression(x, y, p0=None):
     '''Accept two lists of x and y values of the data points,
     with an optional list of initial guesses for the parameters.
-    Return the fitted function y(x) = a*b**x + c and the parameters for later use'''
+    Return the fitted function y(x) = y_lim + (y0-y_lim)*e**(-k*x) and the parameters for later use'''
     x = np.array(x)
     y = np.array(y)
-    (a, b, c), covariance = optimize.curve_fit(lambda t,a,b,c: a*b**x+c, x, y, p0=p0)
-    print(a, b, c)
-    func = lambda x_: a*b**x_+c
-    return func, (a, b, c)
+    (y0, y_lim, k), covariance = optimize.curve_fit(lambda t,y0,y_lim,k: y_lim+(y0-y_lim)*np.e**(-k*t), x, y, p0=p0)
+    print(y0, y_lim, k)
+    func = lambda x_: y_lim+(y0-y_lim)*np.e**(-k*x_)
+    return func, (y0, y_lim, k)
 
 
 def cooling_rate(temperature_histories, time_map):
@@ -42,7 +42,7 @@ def cooling_rate(temperature_histories, time_map):
         t = time_map  # time offset of each measurement from the first measurement line
         for j, tow in enumerate(experiment):
             print(tow)
-            cooling_rates[i,j] = exp_lin_regression(t, tow, p0=(tow[0]-tow[-1], 0.9, tow[-1]))[1][1]
+            cooling_rates[i,j] = exp_lin_regression(t, tow, p0=(tow[0]-tow[-1], 0.9, tow[-1]))[1][2]
     return cooling_rates
 
 if __name__ == '__main__':

@@ -34,8 +34,3 @@ class Experiment():
         self.tow7 = kwargs.get('tow7')
         self.tow8 = kwargs.get('tow8')
         self.tows = np.array([self.tow1, self.tow2, self.tow3, self.tow4, self.tow5, self.tow6, self.tow7, self.tow8])
-        # # average usable values for each measurement line
-        # usable = (int(0.2*len(time)), int(0.8*len(time)))
-        # # only sample the uneven tows (because only they are placing fibers)
-        # self.samples = np.array([[np.mean(line[usable[0]:usable[1]]) for line in tow] for tow in self.tows[0::2]])
-        # self.sample_time = self.time[usable[0]:usable[1]]

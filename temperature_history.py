@@ -1,5 +1,6 @@
 from experiment_read import *
 import matplotlib.pyplot as plt
+from data import *
 import pylab
 
 '''
@@ -34,7 +35,7 @@ Polynomial = np.polynomial.Polynomial
 def get_data_to_fit(data, T_threshold):
     x = []
     y = []
-
+    
     for i in range(len(data)):
         if data[i] > T_threshold:
             x.append(time[i - 1])
@@ -82,7 +83,7 @@ def find_nearest(array,value):
         return array[idx]
 
 
-#Final function that finds
+#Final function returns the time and temperature histories
 def get_temp_history(tow, time):
     distances = np.array(get_distances(tow))
     time_dist = distances / Vel
@@ -116,14 +117,19 @@ def get_temp_history(tow, time):
 
 
 if __name__ == '__main__':
-    time = back['Exp1'].time
-    data = back['Exp4'].tow1
+    for i in range(numExp):
+        time = back[f'Exp{i + 1}'].time
+        for j in range(1, numTows, 2):
+            data = eval("back[f'Exp{i + 1}'].tow" + str(j)) 
 
-    t, temp = get_temp_history(data, time)
-
-    plt.xlabel('Time[s]')
-    plt.ylabel('Temperature[C]')
-    plt.plot(t, temp)
-      
-    plt.show()
-
+            t, temp = get_temp_history(data, time)
+            
+            plt.title(f'{experiment_params[i][0]}[W], {experiment_params[i][1]}[N]')
+            plt.xlabel(f'Time[s]')
+            plt.ylabel(f'Temperature[$^\circ$C]')
+            plt.plot(t, temp, label=f'Tow {j}')
+            
+        plt.legend()
+        plt.savefig(f'cooling\Exp{i+1}')
+        plt.clf()
+    

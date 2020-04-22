@@ -109,11 +109,15 @@ def get_temp_history(tow, time):
 
     point_time += time_offset
 
-    return(point_time, point_temp)
+    time_dist = list(time_dist)
+    time_dist.insert(0, 0)
+    
 
+    return(time_dist, point_temp)
+    
 
 if __name__ == '__main__':
-
+    '''
     for i in range(numExp):
         time = back[f'Exp{i + 1}'].time
         for j in range(1, numTows, 2):
@@ -129,8 +133,13 @@ if __name__ == '__main__':
         plt.legend()
         plt.savefig(f'cooling\Exp{i+1}')
         plt.clf()
-    
-    
+    '''
+    time = back['Exp1'].time
+    tow = back['Exp1'].tow3
+    t, temp = get_temp_history(tow, time)
+
+    plt.plot(t, temp)
+    plt.show()
     
     
     

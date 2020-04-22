@@ -2,6 +2,7 @@ from experiment_read import *
 import matplotlib.pyplot as plt
 from data import *
 import pylab
+from regression import *
 
 '''
 Script used to extract the temperature history of a single point.
@@ -21,18 +22,13 @@ version date: 26.03.2020
 Alex
 '''
 
-numExp = 9 #Number of experiments
-numTows = 8 #Number of tows per experiment
-numLines = 10 #Number of lines per tow in the rear
-Vel = 0.01 #Placement speed 100[mm/s]
-
 front = {f'Exp{i + 1}' : generate_front(i) for i in range(numExp)} #front camera data
 back = {f'Exp{i + 1}' : generate_back(i) for i in range(numExp)} #rear camera data
 
 Polynomial = np.polynomial.Polynomial
 
 #General interval over which to construct the linear approximation of the curve
-def get_data_to_fit(data, T_threshold):
+def get_data_to_fit(data, time, T_threshold):
     x = []
     y = []
     
@@ -47,12 +43,12 @@ def get_data_to_fit(data, T_threshold):
     return x, y
 
 #Find the distances between the measurement lines
-def get_distances(tow):
+def get_distances(tow, time):
     times = []
     for i in range(numLines):
         data = tow[i]
         T_threshold = 55
-        x, y = get_data_to_fit(data, T_threshold)
+        x, y = get_data_to_fit(data, time, T_threshold)
 
         pfit, stats = Polynomial.fit(x, y, 1, full=True)
 
@@ -85,7 +81,7 @@ def find_nearest(array,value):
 
 #Final function returns the time and temperature histories
 def get_temp_history(tow, time):
-    distances = np.array(get_distances(tow))
+    distances = np.array(get_distances(tow, time))
     time_dist = distances / Vel
 
     for i in range(1, len(time_dist)):
@@ -96,7 +92,7 @@ def get_temp_history(tow, time):
 
     start_time = time[400]
     point_time = [time[400]]
-    point_temp = [data[0][400]]
+    point_temp = [tow[0][400]]
 
     time_offset = time_dist + start_time
     time_offset = list(time_offset.flatten())
@@ -108,7 +104,7 @@ def get_temp_history(tow, time):
 
 
     for i in range(len(time_offset)):
-        temp = float(data[i + 1][index_table[i]])
+        temp = float(tow[i + 1][index_table[i]])
         point_temp.append(temp)
 
     point_time += time_offset
@@ -117,6 +113,7 @@ def get_temp_history(tow, time):
 
 
 if __name__ == '__main__':
+
     for i in range(numExp):
         time = back[f'Exp{i + 1}'].time
         for j in range(1, numTows, 2):
@@ -132,4 +129,8 @@ if __name__ == '__main__':
         plt.legend()
         plt.savefig(f'cooling\Exp{i+1}')
         plt.clf()
+    
+    
+    
+    
     

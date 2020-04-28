@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from data import *
 import pylab
 from regression import *
+import scipy
 
 '''
 Script used to extract the temperature history of a single point.
@@ -18,12 +19,13 @@ To generate data:
       point_time -> array containing the time history of the point
       point_temp -> array containing the temperature history of the point
 
-version date: 26.03.2020
+version date: 27.04.2020
 Alex
-'''
 
-front = {f'Exp{i + 1}' : generate_front(i) for i in range(numExp)} #front camera data
-back = {f'Exp{i + 1}' : generate_back(i) for i in range(numExp)} #rear camera data
+'''
+#Group experimental data with its parameters 
+front = {f'Exp{i + 1}' : [generate_front(i), experiment_params[i]]  for i in range(numExp)} #front camera data
+back = {f'Exp{i + 1}' : [generate_back(i), experiment_params[i]] for i in range(numExp)} #rear camera data
 
 Polynomial = np.polynomial.Polynomial
 
@@ -79,7 +81,7 @@ def find_nearest(array,value):
         return array[idx]
 
 
-#Final function returns the time and temperature histories
+#Final function returns the shifted time (stating from 0) and temperature histories
 def get_temp_history(tow, time):
     distances = np.array(get_distances(tow, time))
     time_dist = distances / Vel
@@ -108,38 +110,145 @@ def get_temp_history(tow, time):
         point_temp.append(temp)
 
     point_time += time_offset
-
-    time_dist = list(time_dist)
+    
+    time_dist = list(time_dist.flatten())
     time_dist.insert(0, 0)
     
 
     return(time_dist, point_temp)
+
+def func(t, A, B, k):
+    return A + B * np.exp(-k * t)
     
 
 if __name__ == '__main__':
-    '''
-    for i in range(numExp):
-        time = back[f'Exp{i + 1}'].time
-        for j in range(1, numTows, 2):
-            data = eval("back[f'Exp{i + 1}'].tow" + str(j)) 
 
-            t, temp = get_temp_history(data, time)
-            
-            plt.title(f'{experiment_params[i][0]}[W], {experiment_params[i][1]}[N]')
-            plt.xlabel(f'Time[s]')
-            plt.ylabel(f'Temperature[$^\circ$C]')
-            plt.plot(t, temp, label=f'Tow {j}')
-            
-        plt.legend()
-        plt.savefig(f'cooling\Exp{i+1}')
-        plt.clf()
-    '''
-    time = back['Exp1'].time
-    tow = back['Exp1'].tow3
-    t, temp = get_temp_history(tow, time)
+    F100_1 = [[], []]
+    F500_1 = [[], []]
+    F1000_1 = [[], []]
 
-    plt.plot(t, temp)
-    plt.show()
+    F100_3 = [[], []]
+    F500_3 = [[], []]
+    F1000_3 = [[], []]
+
+    F100_5 = [[], []]
+    F500_5 = [[], []]
+    F1000_5 = [[], []]
+
+    F100_7 = [[], []]
+    F500_7 = [[], []]
+    F1000_7 = [[], []]
+    
+    for exp in back.values():
+        for i in ['1', '3', '5', '7']:
+            
+            time = exp[0].time
+            tow = eval('exp[0].tow' + i)
+            t, temp = get_temp_history(tow, time)
+
+            #Make initial guesses for the parameters 
+            k0 = 0.5
+            coeff = np.exp(-k0 * t[-1])
+            A = np.array([1, 1, 1, coeff]).reshape(2,2)
+            B = np.array([temp[0], temp[-1]]).reshape(2, 1)
+
+            A0, B0 = np.linalg.solve(A, B)
+            A0 = float(A0)
+            B0 = float(B0)
+
+            #Fit exponential curve of form A + Be^(-kt) to experimental data
+
+            params = scipy.optimize.curve_fit(func, t, temp, p0=[A0, B0, k0])[0]
+
+            k = params[2]
+            P = exp[1][0]
+            F = exp[1][1]
+
+            if i == '1':
+
+                if F == 100:
+                    F100_1[0].append(P)
+                    F100_1[1].append(k)
+
+                if F == 500:
+                    F500_1[0].append(P)
+                    F500_1[1].append(k)
+
+                if F == 1000:
+                    F1000_1[0].append(P)
+                    F1000_1[1].append(k)
+
+            if i == '3':
+
+                if F == 100:
+                    F100_3[0].append(P)
+                    F100_3[1].append(k)
+
+                if F == 500:
+                    F500_3[0].append(P)
+                    F500_3[1].append(k)
+
+                if F == 1000:
+                    F1000_3[0].append(P)
+                    F1000_3[1].append(k)
+
+            if i == '5':
+
+                if F == 100:
+                    F100_5[0].append(P)
+                    F100_5[1].append(k)
+
+                if F == 500:
+                    F500_5[0].append(P)
+                    F500_5[1].append(k)
+
+                if F == 1000:
+                    F1000_5[0].append(P)
+                    F1000_5[1].append(k)
+
+            if i == '7':
+
+                if F == 100:
+                    F100_7[0].append(P)
+                    F100_7[1].append(k)
+
+                if F == 500:
+                    F500_7[0].append(P)
+                    F500_7[1].append(k)
+
+                if F == 1000:
+                    F1000_7[0].append(P)
+                    F1000_7[1].append(k)
+                    
+
+    plt.xlabel('Power[W]')
+    plt.ylabel('Cooling constant k[]')
+    plt.plot(F100_3[0], F100_3[1], color='g', label='100[N]')
+    plt.plot(F500_3[0], F500_3[1], color='r', label='500[N]')
+    plt.plot(F1000_3[0], F1000_3[1], color='c', label='1000[N]')
+    plt.plot(F100_5[0], F100_5[1], color='g')
+    plt.plot(F500_5[0], F500_5[1], color='r')
+    plt.plot(F1000_5[0], F1000_5[1], color='c')
+    plt.title('Cooling rate versus power for inner tows')
+    plt.legend()
+    plt.savefig('cooling/fit/innerTows.png')
+    plt.clf()
+
+    plt.xlabel('Power[W]')
+    plt.ylabel('Cooling constant k[]')
+    plt.plot(F100_1[0], F100_1[1], color='g', label='100[N]')
+    plt.plot(F500_1[0], F500_1[1], color='r', label='500[N]')
+    plt.plot(F1000_1[0], F1000_1[1], color='c', label='1000[N]')
+    plt.plot(F100_7[0], F100_7[1], color='g')
+    plt.plot(F500_7[0], F500_7[1], color='r')
+    plt.plot(F1000_7[0], F1000_7[1], color='c')
+    plt.title('Cooling rate versus power for outer tows')
+    plt.legend()
+    plt.savefig('cooling/fit/outerTows.png')
+    plt.clf()
+
+          
+        
     
     
     

@@ -32,6 +32,7 @@ from experiment import *
         The type of each attribute is a numpy array        
         
     version date: 03.03.2020
+    Alex
 """
 
 def generate_front(file_number):

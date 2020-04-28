@@ -22,6 +22,7 @@ class Experiment():
             the temperature history of each line as a sub-array.
 
         version date: 07.03.2020
+        Alex
         '''
         
         self.time = time

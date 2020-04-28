@@ -123,21 +123,21 @@ def func(t, A, B, k):
 
 if __name__ == '__main__':
 
-    F100_1 = [[], []]
-    F500_1 = [[], []]
-    F1000_1 = [[], []]
+    P13_1 = [[], []]
+    P15_1 = [[], []]
+    P175_1 = [[], []]
 
-    F100_3 = [[], []]
-    F500_3 = [[], []]
-    F1000_3 = [[], []]
+    P13_3 = [[], []]
+    P15_3 = [[], []]
+    P175_3 = [[], []]
 
-    F100_5 = [[], []]
-    F500_5 = [[], []]
-    F1000_5 = [[], []]
+    P13_5 = [[], []]
+    P15_5 = [[], []]
+    P175_5 = [[], []]
 
-    F100_7 = [[], []]
-    F500_7 = [[], []]
-    F1000_7 = [[], []]
+    P13_7 = [[], []]
+    P15_7 = [[], []]
+    P175_7 = [[], []]
     
     for exp in back.values():
         for i in ['1', '3', '5', '7']:
@@ -166,85 +166,79 @@ if __name__ == '__main__':
 
             if i == '1':
 
-                if F == 100:
-                    F100_1[0].append(P)
-                    F100_1[1].append(k)
+                if P == 1300:
+                    P13_1[0].append(F)
+                    P13_1[1].append(k)
 
-                if F == 500:
-                    F500_1[0].append(P)
-                    F500_1[1].append(k)
+                if P == 1500:
+                    P15_1[0].append(F)
+                    P15_1[1].append(k)
 
-                if F == 1000:
-                    F1000_1[0].append(P)
-                    F1000_1[1].append(k)
+                if P == 1750:
+                    P175_1[0].append(F)
+                    P175_1[1].append(k)
 
             if i == '3':
 
-                if F == 100:
-                    F100_3[0].append(P)
-                    F100_3[1].append(k)
+                if P == 1300:
+                    P13_3[0].append(F)
+                    P13_3[1].append(k)
 
-                if F == 500:
-                    F500_3[0].append(P)
-                    F500_3[1].append(k)
+                if P == 1500:
+                    P15_3[0].append(F)
+                    P15_3[1].append(k)
 
-                if F == 1000:
-                    F1000_3[0].append(P)
-                    F1000_3[1].append(k)
+                if P == 1750:
+                    P175_3[0].append(F)
+                    P175_3[1].append(k)
 
             if i == '5':
 
-                if F == 100:
-                    F100_5[0].append(P)
-                    F100_5[1].append(k)
+                if P == 1300:
+                    P13_5[0].append(F)
+                    P13_5[1].append(k)
 
-                if F == 500:
-                    F500_5[0].append(P)
-                    F500_5[1].append(k)
+                if P == 1500:
+                    P15_5[0].append(F)
+                    P15_5[1].append(k)
 
-                if F == 1000:
-                    F1000_5[0].append(P)
-                    F1000_5[1].append(k)
+                if P == 1750:
+                    P175_5[0].append(F)
+                    P175_5[1].append(k)
 
             if i == '7':
 
-                if F == 100:
-                    F100_7[0].append(P)
-                    F100_7[1].append(k)
+                if P == 1300:
+                    P13_7[0].append(F)
+                    P13_7[1].append(k)
 
-                if F == 500:
-                    F500_7[0].append(P)
-                    F500_7[1].append(k)
+                if P == 1500:
+                    P15_7[0].append(F)
+                    P15_7[1].append(k)
 
-                if F == 1000:
-                    F1000_7[0].append(P)
-                    F1000_7[1].append(k)
+                if P == 1750:
+                    P175_7[0].append(F)
+                    P175_7[1].append(k)
                     
 
-    plt.xlabel('Power[W]')
+    plt.xlabel('Force[N]')
     plt.ylabel('Cooling constant k[]')
-    plt.plot(F100_3[0], F100_3[1], color='g', label='100[N]')
-    plt.plot(F500_3[0], F500_3[1], color='r', label='500[N]')
-    plt.plot(F1000_3[0], F1000_3[1], color='c', label='1000[N]')
-    plt.plot(F100_5[0], F100_5[1], color='g')
-    plt.plot(F500_5[0], F500_5[1], color='r')
-    plt.plot(F1000_5[0], F1000_5[1], color='c')
-    plt.title('Cooling rate versus power for inner tows')
-    plt.legend()
-    plt.savefig('cooling/fit/innerTows.png')
-    plt.clf()
-
-    plt.xlabel('Power[W]')
-    plt.ylabel('Cooling constant k[]')
-    plt.plot(F100_1[0], F100_1[1], color='g', label='100[N]')
-    plt.plot(F500_1[0], F500_1[1], color='r', label='500[N]')
-    plt.plot(F1000_1[0], F1000_1[1], color='c', label='1000[N]')
-    plt.plot(F100_7[0], F100_7[1], color='g')
-    plt.plot(F500_7[0], F500_7[1], color='r')
-    plt.plot(F1000_7[0], F1000_7[1], color='c')
+    plt.plot(P13_1[0], P13_1[1], marker='o', label='1300[W]')
+    plt.plot(P15_1[0], P15_1[1], marker='d',label='1500[W]')
+    plt.plot(P175_1[0], P175_1[1], marker='x', label='1750[W]')
     plt.title('Cooling rate versus power for outer tows')
     plt.legend()
-    plt.savefig('cooling/fit/outerTows.png')
+    plt.savefig('cooling/fit/outerTowsvsForce.png')
+    plt.clf()
+
+    plt.xlabel('Force[N]')
+    plt.ylabel('Cooling constant k[]')
+    plt.plot(P13_3[0], P13_3[1], marker='o', label='1300[W]')
+    plt.plot(P15_3[0], P15_3[1], marker='d', label='1500[W]')
+    plt.plot(P175_3[0], P175_3[1], marker='x', label='1750[W]')
+    plt.title('Cooling rate versus power for inter tows')
+    plt.legend()
+    plt.savefig('cooling/fit/innerTowsvsForce.png')
     plt.clf()
 
           

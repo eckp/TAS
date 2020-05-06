@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
             time = front_exp_i.time
             tow j = front_exp_i.tow{j} with ( 1 <= j (tow number) <= 8 )
 
-    Version date: 26.03.2020
+    Version date: 5.05.2020
 """
 
 """
@@ -137,8 +137,8 @@ def plot_all():
         for j in range(4):
             plt.plot(eval(f"front_exp_{i}.time"), eval(f"front_exp_{i}.tow{2 * j + 1}"), label = (f"Experiment {i}, Tow {2 * j + 1}"), linestyle = eval(f"linestyle_{j + 1}"))
             
-    plt.xlabel(r"time [s]", size = 15)
-    plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+    plt.xlabel(r"time [s]", size = 20)
+    plt.ylabel(r"Temperature [$^\circ C$]", size = 20)
     plt.box()
     plt.xlim(-0.5,15.1)
     plt.legend(loc="best", fancybox = True, shadow = True)
@@ -165,9 +165,9 @@ def plot_each_experiment_sep():
         for j in range(4):
             plt.plot(eval(f"front_exp_{i}.time"), eval(f"front_exp_{i}.tow{2 * j + 1}"), label = (f"Tow {2 * j + 1}"), linestyle = eval(f"linestyle_{j + 1}"), color =  eval(f"color_darker_{j + 1}"), linewidth = 0.85)
             
-        plt.title(eval(f"title_{i}"), size = 15)
-        plt.xlabel(r"time [s]", size = 15)
-        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.title(eval(f"title_{i}"), size = 20)
+        plt.xlabel(r"time [s]", size = 20)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 20)
         plt.box()
         plt.xlim(-0.5,15.1)
         plt.legend(loc="best", fancybox = True, shadow = True)
@@ -195,9 +195,9 @@ def plot_each_tow_sep():
         for i in range(1,10):
             plt.plot(eval(f"front_exp_{i}.time"), eval(f"front_exp_{i}.tow{2 * j + 1}"), label = (f"Experiment {i}"), linestyle = eval(f"experiment_style_{i}"))
 
-        plt.title(f"Tow {2 * j + 1}", size = 15) 
-        plt.xlabel(r"time [s]", size = 15)
-        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.title(f"Tow {2 * j + 1}", size = 20) 
+        plt.xlabel(r"time [s]", size = 20)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 20)
         plt.box()
         plt.xlim(-0.5,15.1)
         plt.legend(loc="best", fancybox = True, shadow = True)
@@ -207,11 +207,11 @@ def plot_each_tow_sep():
         plt.grid(b=True, which='major', color='#bebebe', linestyle='-')
         plt.grid(b=True, which='minor', color='#e9e9e9', linestyle='-', linewidth=0.5)
         
-    figure = plt.gcf()
-    figure.set_size_inches(12,6)
-    plt.savefig(f"figures/tow_{2 * j + 1}.png", dpi=300, bbox_inches = "tight")
-    #plt.show()
-    plt.close()
+        figure = plt.gcf()
+        figure.set_size_inches(12,6)
+        plt.savefig(f"figures/tow_{2 * j + 1}.png", dpi=300, bbox_inches = "tight")
+        #plt.show()
+        plt.close()
 
 # 3.- For a certain power setting plot the temperature history of the tows in different plots.
 
@@ -228,9 +228,9 @@ def plot_each_power_w_all_tows():
                 
                 plt.plot(eval(f"front_exp_{j}.time"), eval(f"front_exp_{j}.tow{2 * i + 1}"), label = (eval(f"compaction_title_{j - 3 * ( k - 1 )}")), linestyle = eval(f"linestyle_{j - 3 * ( k - 1 )}"))
                 
-            plt.title(f"Tow {2 * i + 1}", size = 15)
-            plt.xlabel(r"time [s]", size = 15)
-            plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+            plt.title(f"Tow {2 * i + 1}", size = 20)
+            plt.xlabel(r"time [s]", size = 20)
+            plt.ylabel(r"Temperature [$^\circ C$]", size = 20)
             plt.box()
             plt.xlim(-0.5,15.1)
             plt.legend(loc="best", fancybox = True, shadow = True)
@@ -263,9 +263,9 @@ def plot_each_force_w_all_tows():
                 
                 plt.plot(eval(f"front_exp_{j}.time"), eval(f"front_exp_{j}.tow{2 * i + 1}"), label = (eval(f"power_title_{int((j - k) / 3 + 1)}")), linestyle = eval(f"linestyle_{int((j - k) / 3 + 1)}"))
                 
-            plt.title(f"Tow {2 * i + 1}", size = 15)
-            plt.xlabel(r"time [s]", size = 15)
-            plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+            plt.title(f"Tow {2 * i + 1}", size = 20)
+            plt.xlabel(r"time [s]", size = 20)
+            plt.ylabel(r"Temperature [$^\circ C$]", size = 20)
             plt.box()
             plt.xlim(-0.5,15.1)
             plt.legend(loc="best", fancybox = True, shadow = True)
@@ -305,9 +305,9 @@ def plot_each_power_w_avg_tow():
             
             plt.plot(eval(f"front_exp_{3 * i + j}.time"), average_temp, label = eval(f"compaction_title_{j}"), linestyle = eval(f"linestyle_{j}") )
 
-        plt.title(eval(f"power_title_{i + 1}"), size = 15)
-        plt.xlabel(r"time [s]", size = 15)
-        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.title(eval(f"power_title_{i + 1}"), size = 20)
+        plt.xlabel(r"time [s]", size = 20)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 20)
         plt.box()
         plt.xlim(-0.5,15.1)
         plt.legend(loc="best", fancybox = True, shadow = True)
@@ -342,9 +342,9 @@ def plot_each_force_w_avg_tow():
             
             plt.plot(eval(f"front_exp_{i + 3 * j}.time"), average_temp, label = eval(f"power_title_{j + 1}"), linestyle = eval(f"linestyle_{j + 1}") )
 
-        plt.title(eval(f"compaction_title_{i}"), size = 15)
-        plt.xlabel(r"time [s]", size = 15)
-        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.title(eval(f"compaction_title_{i}"), size = 20)
+        plt.xlabel(r"time [s]", size = 20)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 20)
         plt.box()
         plt.xlim(-0.5,15.1)
         plt.legend(loc="best", fancybox = True, shadow = True)
@@ -388,9 +388,9 @@ def total_avg_temp_per_exp_tow():
             
             plt.plot(time_interval, average_temp_tot, label = (f"Tow {2 * j + 1}"), linestyle = eval(f"linestyle_{j + 1}"), linewidth = 1.75, color =  eval(f"color_{j + 1}"))
 
-        plt.title(eval(f"title_{i}"), size = 15)
-        plt.xlabel(r"time [s]", size = 15)
-        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.title(eval(f"title_{i}"), size = 20)
+        plt.xlabel(r"time [s]", size = 20)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 20)
         plt.box()
         plt.xlim(3.5, 12.1)
         plt.ylim(250, 525)
@@ -403,7 +403,7 @@ def total_avg_temp_per_exp_tow():
         figure = plt.gcf()
         figure.set_size_inches(12,6)
         plt.savefig(f"figures/tot_avg_exp_{i}_sectioned.png", dpi = 300, bbox_inches = "tight")
-        plt.show()
+        #plt.show()
         plt.close()
 
 ##        print()
@@ -426,7 +426,6 @@ def total_avg_temp_each_power():
             
             end = np.where(eval(f"front_exp_{3 * i + j}.time") == time_interval[-1])[0][0]
 
-            average_temp_tot = np.zeros(time_interval.size)
 
             tow_1_temp_interval = eval(f"front_exp_{3 * i + j}.tow{1}[ start : end ]")
             tow_3_temp_interval = eval(f"front_exp_{3 * i + j}.tow{3}[ start : end ]")
@@ -441,13 +440,14 @@ def total_avg_temp_each_power():
                 average_temp = 0.25 * ( eval(f"front_exp_{3 * i + j}.tow1") + eval(f"front_exp_{3 * i + j}.tow3") + eval(f"front_exp_{3 * i + j}.tow5") + eval(f"front_exp_{3 * i + j}.tow7") )
                     
             plt.plot(eval(f"front_exp_{3 * i + j}.time"), average_temp, label = eval(f"compaction_title_{j}"), linestyle = eval(f"linestyle_{j}"), linewidth = 1.2, color =  eval(f"color_darker_{j}") )
-            plt.plot(time_interval, average_temp_tot, label = (eval(f"compaction_title_{j}") + " - Averaged Line"), linestyle = eval(f"linestyle_{j}"), linewidth = 1.75, color =  eval(f"color_{j}") )
+            plt.plot(time_interval, average_temp_tot, linestyle = eval(f"linestyle_{j}"), linewidth = 1.75, color =  eval(f"color_{j}") )
 
-        plt.title(eval(f"power_title_{i + 1}"), size = 15)
-        plt.xlabel(r"time [s]", size = 15)
-        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.title(eval(f"power_title_{i + 1}"), size = 20)
+        plt.xlabel(r"time [s]", size = 20)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 20)
         plt.box()
-        plt.xlim(-0.5,15.1)
+        plt.xlim(3.5, 12.1)
+        plt.ylim(250, 501)
         plt.legend(loc="best", fancybox = True, shadow = True)
         plt.axhline(y=0, color='k', linewidth=0.75)
         plt.axvline(x=0, color='k', linewidth=0.75)
@@ -456,7 +456,7 @@ def total_avg_temp_each_power():
         plt.grid(b=True, which='minor', color='#e9e9e9', linestyle='-', linewidth=0.5)
         figure = plt.gcf()
         figure.set_size_inches(12,6)
-        plt.savefig(f"figures/tot_avg_power_{i}.png", dpi=300, bbox_inches = "tight")
+        plt.savefig(f"figures/tot_avg_power_{i}_sectioned.png", dpi=300, bbox_inches = "tight")
         #plt.show()
         plt.close()
 
@@ -477,8 +477,6 @@ def total_avg_temp_each_force():
             
             end = np.where(eval(f"front_exp_{i + 3 * j}.time") == time_interval[-1])[0][0]
 
-            average_temp_tot = np.zeros(time_interval.size)
-
             tow_1_temp_interval = eval(f"front_exp_{i + 3 * j}.tow{1}[ start : end ]")
             tow_3_temp_interval = eval(f"front_exp_{i + 3 * j}.tow{3}[ start : end ]")
             tow_5_temp_interval = eval(f"front_exp_{i + 3 * j}.tow{5}[ start : end ]")
@@ -492,13 +490,14 @@ def total_avg_temp_each_force():
                 average_temp = 0.25 * ( eval(f"front_exp_{i + 3 * j}.tow1") + eval(f"front_exp_{i + 3 * j}.tow3") + eval(f"front_exp_{i + 3 * j}.tow5") + eval(f"front_exp_{i + 3 * j}.tow7") )
                 
             plt.plot(eval(f"front_exp_{i + 3 * j}.time"), average_temp, label = eval(f"power_title_{j + 1}"), linestyle = eval(f"linestyle_{j + 1}"), linewidth = 1.2, color =  eval(f"color_darker_{j + 1}") )
-            plt.plot(time_interval, average_temp_tot, label = (eval(f"power_title_{j + 1}") + " - Averaged Line"), linestyle = eval(f"linestyle_{j + 1}"), linewidth = 1.75, color =  eval(f"color_{j + 1}") )
+            plt.plot(time_interval, average_temp_tot, linestyle = eval(f"linestyle_{j + 1}"), linewidth = 1.75, color =  eval(f"color_{j + 1}") )
 
-        plt.title(eval(f"compaction_title_{i}"), size = 15)
-        plt.xlabel(r"time [s]", size = 15)
-        plt.ylabel(r"Temperature [$^\circ C$]", size = 15)
+        plt.title(eval(f"compaction_title_{i}"), size = 20)
+        plt.xlabel(r"time [s]", size = 20)
+        plt.ylabel(r"Temperature [$^\circ C$]", size = 20)
         plt.box()
-        plt.xlim(-0.5,15.1)
+        plt.xlim(3.5, 12.1)
+        plt.ylim(250, 501)
         plt.legend(loc="best", fancybox = True, shadow = True)
         plt.axhline(y=0, color='k', linewidth=0.75)
         plt.axvline(x=0, color='k', linewidth=0.75)
@@ -507,7 +506,7 @@ def total_avg_temp_each_force():
         plt.grid(b=True, which='minor', color='#e9e9e9', linestyle='-', linewidth=0.5)
         figure = plt.gcf()
         figure.set_size_inches(12,6)
-        plt.savefig(f"figures/tot_avg_force_{i}.png", dpi=300, bbox_inches = "tight")
+        plt.savefig(f"figures/tot_avg_force_{i}_sectioned.png", dpi=300, bbox_inches = "tight")
         #plt.show()
         plt.close()
             
@@ -515,12 +514,12 @@ def total_avg_temp_each_force():
 # Run functions:
 
 ##plot_all()
-plot_each_experiment_sep()
+##plot_each_experiment_sep()
 ##plot_each_tow_sep()
 ##plot_each_power_w_all_tows()
 ##plot_each_force_w_all_tows()
 ##plot_each_power_w_avg_tow()
 ##plot_each_force_w_avg_tow()
 ##total_avg_temp_per_exp_tow()
-##total_avg_temp_each_power()
-##total_avg_temp_each_force()
+total_avg_temp_each_power()
+total_avg_temp_each_force()

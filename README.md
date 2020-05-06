@@ -1,7 +1,7 @@
-# TAS
-Test, Analysis &amp; Simulation
+# Test, Analysis &amp; Simulation
 
-Structure of the repository
+
+## Structure of the repository
 
 **cooling** directory contains the results obtained from the cooling rate analysis such as the exponential fitting to the experimental data.
 

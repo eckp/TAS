@@ -82,7 +82,7 @@ def find_nearest(array,value):
 
 
 #Final function returns the shifted time (stating from 0) and temperature histories
-def get_temp_history(tow, time):
+def get_temp_history(tow, time, sample_idx=400):
     distances = np.array(get_distances(tow, time))
     time_dist = distances / Vel
 
@@ -92,9 +92,9 @@ def get_temp_history(tow, time):
         except:
             pass
 
-    start_time = time[400]
-    point_time = [time[400]]
-    point_temp = [tow[0][400]]
+    start_time = time[sample_idx]
+    point_time = [time[sample_idx]]
+    point_temp = [tow[0][sample_idx]]
 
     time_offset = time_dist + start_time
     time_offset = list(time_offset.flatten())

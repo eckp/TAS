@@ -1,7 +1,10 @@
 '''generating the final graphs which should summarize all data'''
 import numpy as np
 from matplotlib import pyplot as plt
-from data import experiment_params
+from data import *
+from experiment_read import *
+from regression import get_cooling_rate
+from temperature_history import get_temp_history
 
 def final_graph(cooling_rate, n_exp):
     '''Accepts cooling rate and tow number (0-3) to generate a graph
@@ -36,17 +39,23 @@ def final_graph(cooling_rate, n_exp):
         
 
 if __name__ == "__main__":
-    # Sample cooling rate
-    cooling_rate = np.array([[0.66734257, 0.69078883, 0.77631882, 0.63813754],
-       [0.39912428, 0.45883439, 0.49331085, 0.39826872],
-       [0.73990755, 0.8245401 , 0.82595915, 0.70234445],
-       [0.6686941 , 0.77086088, 0.74432964, 0.64881394],
-       [0.71908277, 0.83954894, 0.8427713 , 0.71143514],
-       [0.75150193, 0.85826932, 0.83488946, 0.71027249],
-       [0.66258022, 0.76044122, 0.75452233, 0.63714172],
-       [0.71199218, 0.82476226, 0.81331313, 0.70321665],
-       [0.72214175, 0.79171589, 0.79241718, 0.67660492]])
+    back = {f'Exp{i + 1}' : [generate_back(i), experiment_params[i]] for i in range(numExp)} #rear camera data
+
+    for exp in back.values():
+        for itow in range(0,8,2):  # odd tows 1 through 7
+            print(f'experiment {exp[1]}, tow nr. {itow+1}')
+            time = exp[0].time  # get the time list of this tow
+            tow_temp = exp[0].tows[itow]  # get the temperature data of this tow
+            # sample the temp history along the entire length of the tow
+            tow_time_temps = np.array([get_temp_history(tow_temp, time, sample_idx=sample_idx) for sample_idx in range(len(time))])
+            plt.pcolor(tow_time_temps[:,1,:].T, cmap='inferno')
+            plt.show()
+            
+            sample_range = list(range(70, 740))  # range of indices to sample (cooling rate calculations require smooth enough curves)
+            tow_cooling_rates = [get_cooling_rate(temp_hist, time_map) for time_map, temp_hist  in tow_time_temps[min(sample_range):max(sample_range)+1]]
+            plt.plot(sample_range, tow_cooling_rates)
+            plt.show()
     
-    print(experiment_params)
-    graph_data = final_graph(cooling_rate, 0)
-    print(graph_data)
+#    print(experiment_params)
+#    graph_data = final_graph(cooling_rate, 0)
+#    print(graph_data)

@@ -25,8 +25,12 @@ def exp_offset_regression(x, y, p0=None):
     func = lambda x_: a*b**x_+c
     return func, (a, b, c)
 
+def get_cooling_rate(tow, time_map):
+    '''Calculate the cooling rate of a single tow'''
+    curve_parameters = exp_offset_regression(time_map, tow, p0=(tow[0]-tow[-1], 0.9, tow[-1]))[1]
+    return -np.log(curve_parameters[1])
 
-def cooling_rate(temperature_histories, time_map):
+def get_cooling_rates(temperature_histories, time_map):
     '''Accept a list of experiments with the temperature history of a point on n tows per experiment,
     (which can be averaged or just a sample).
     temperature_histories should look like:
@@ -42,8 +46,7 @@ def cooling_rate(temperature_histories, time_map):
         t = time_map  # time offset of each measurement from the first measurement line
         for j, tow in enumerate(experiment):
             print(tow)
-            curve_parameters = exp_offset_regression(t, tow, p0=(tow[0]-tow[-1], 0.9, tow[-1]))[1]
-            cooling_rates[i,j] = -np.log(curve_parameters[1])
+            cooling_rates[i,j] = get_cooling_rate(tow, t)
     return cooling_rates
 
 if __name__ == '__main__':
@@ -102,7 +105,7 @@ if __name__ == '__main__':
                                    [209.66, 192.95, 180.69, 173.49, 166.58, 159.07, 144.85, 138.07, 134.69, 132.4],
                                    [207.28, 187.32, 174.3, 164.35, 156.75, 149.12, 139.08, 133.8, 131.19, 128.35]]])
     sample_time_map = np.array([0, 0.54, 0.97, 1.48, 2.02, 2.53, 3.01, 3.44, 3.98, 4.49])
-    cooling_rates = cooling_rate(sample_temp_hists, sample_time_map)
+    cooling_rates = get_cooling_rates(sample_temp_hists, sample_time_map)
     for i, exp in enumerate(cooling_rates):
         plt.plot([i]*len(exp), exp, 'o')
     plt.show()

@@ -6,6 +6,8 @@ from experiment_read import *
 from regression import get_cooling_rate
 from temperature_history import get_temp_history
 
+colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+
 def final_graph(cooling_rate, n_exp):
     '''Accepts cooling rate and tow number (0-3) to generate a graph
     with compaction force, laser power and cooling rate combined.
@@ -36,6 +38,16 @@ def final_graph(cooling_rate, n_exp):
     plt.show()
     return graph_data
 
+def plot_all_cr(all_cr):
+    fig, axes = plt.subplots(3,3, figsize=(12,12), sharex=True, sharey=True)
+    for exp_idx, (exp_cr, ax) in enumerate(zip(all_cr, axes.flatten())):
+        for tow_idx, tow_cr in enumerate(exp_cr):
+            exp_params = experiment_params[exp_idx]
+            ax.set_title(f'Experiment {exp_idx+1}: power = {exp_params[0]} W, force = {exp_params[1]} N')
+            ax.plot(list(range(*sample_range)), tow_cr, c=colors[tow_idx])
+    plt.show()
+
+
 def save_rates(location='cooling/cooling_rate_dump', num=1):
     import csv
     for exp_n, exp_rates in enumerate(all_cooling_rates):
@@ -54,13 +66,13 @@ if __name__ == "__main__":
             time = exp[0].time  # get the time list of this tow
             tow_temp = exp[0].tows[itow]  # get the temperature data of this tow
             # sample the temp history along the sample range
-            sample_range = (300, 400)  # range of indices to sample
-            tow_time_temps = np.array([get_temp_history(tow_temp, time, sample_idx=sample_idx) for sample_idx in range(*sample_range)])
-            plt.pcolor(tow_time_temps[:,1,:].T, cmap='inferno')
-            plt.show()
-            for temp_h in tow_time_temps[:,1,:]:
-                plt.plot(tow_time_temps[0,0,:], temp_h)
-            plt.show()
+            sample_range = (100, 700)  # range of indices to sample
+            tow_time_temps = np.array([get_temp_history(time, tow_temp, itow//2, sample_idx=sample_idx) for sample_idx in range(*sample_range)])
+#            plt.pcolor(tow_time_temps[:,1,:].T, cmap='inferno')
+#            plt.show()
+#            for temp_h in tow_time_temps[:,1,:]:
+#                plt.plot(tow_time_temps[0,0,:], temp_h)
+#            plt.show()
 
             try:
                 tow_cooling_rates = [get_cooling_rate(temp_hist, time_map) for time_map, temp_hist  in tow_time_temps]#[sample_range[0]:sample_range[1]+1]]
@@ -69,6 +81,8 @@ if __name__ == "__main__":
 #            plt.plot(list(range(*sample_range)), tow_cooling_rates)
 #            plt.show()
         all_cooling_rates.append(exp_cooling_rates)
+    plot_all_cr(all_cooling_rates)
+
 
 #    print(experiment_params)
 #    graph_data = final_graph(cooling_rate, 0)

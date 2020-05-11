@@ -35,27 +35,41 @@ def final_graph(cooling_rate, n_exp):
     plt.legend()
     plt.show()
     return graph_data
-        
-        
+
+def save_rates(location='cooling/cooling_rate_dump', num=1):
+    import csv
+    for exp_n, exp_rates in enumerate(all_cooling_rates):
+        with open(f'{location}{num}_exp{exp_n+1}.csv', 'w', newline='') as f:
+            writer = csv.writer(f)
+            for line in zip(*exp_rates):
+                writer.writerow(line)
 
 if __name__ == "__main__":
     back = {f'Exp{i + 1}' : [generate_back(i), experiment_params[i]] for i in range(numExp)} #rear camera data
-
+    all_cooling_rates = []
     for exp in back.values():
+        exp_cooling_rates = []
         for itow in range(0,8,2):  # odd tows 1 through 7
             print(f'experiment {exp[1]}, tow nr. {itow+1}')
             time = exp[0].time  # get the time list of this tow
             tow_temp = exp[0].tows[itow]  # get the temperature data of this tow
-            # sample the temp history along the entire length of the tow
-            tow_time_temps = np.array([get_temp_history(tow_temp, time, sample_idx=sample_idx) for sample_idx in range(len(time))])
+            # sample the temp history along the sample range
+            sample_range = (300, 400)  # range of indices to sample
+            tow_time_temps = np.array([get_temp_history(tow_temp, time, sample_idx=sample_idx) for sample_idx in range(*sample_range)])
             plt.pcolor(tow_time_temps[:,1,:].T, cmap='inferno')
             plt.show()
-            
-            sample_range = list(range(70, 740))  # range of indices to sample (cooling rate calculations require smooth enough curves)
-            tow_cooling_rates = [get_cooling_rate(temp_hist, time_map) for time_map, temp_hist  in tow_time_temps[min(sample_range):max(sample_range)+1]]
-            plt.plot(sample_range, tow_cooling_rates)
+            for temp_h in tow_time_temps[:,1,:]:
+                plt.plot(tow_time_temps[0,0,:], temp_h)
             plt.show()
-    
+
+            try:
+                tow_cooling_rates = [get_cooling_rate(temp_hist, time_map) for time_map, temp_hist  in tow_time_temps]#[sample_range[0]:sample_range[1]+1]]
+            finally:
+                exp_cooling_rates.append(tow_cooling_rates)
+#            plt.plot(list(range(*sample_range)), tow_cooling_rates)
+#            plt.show()
+        all_cooling_rates.append(exp_cooling_rates)
+
 #    print(experiment_params)
 #    graph_data = final_graph(cooling_rate, 0)
 #    print(graph_data)

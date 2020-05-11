@@ -10,24 +10,27 @@ def exp_regression(x, y, p0=None):
     x = np.array(x)
     y = np.array(y)
     (a, b), covariance = optimize.curve_fit(lambda t,a,b: a*b**x, x, y, p0=p0)
-    print(a, b)
+#    print(a, b)
     func = lambda x_: a*b**x_
     return func, (a, b)
 
-def exp_offset_regression(x, y, p0=None):
+def exp_offset_regression(x, y, p0=None, bounds=(-np.inf, np.inf)):
     '''Accept two lists of x and y values of the data points,
     with an optional list of initial guesses for the parameters.
     Return the fitted function y(x) = a*b**x + c and the parameters for later use'''
     x = np.array(x)
     y = np.array(y)
-    (a, b, c), covariance = optimize.curve_fit(lambda t,a,b,c: a*b**x+c, x, y, p0=p0)
-    print(a, b, c)
+    (a, b, c), covariance = optimize.curve_fit(lambda t,a,b,c: a*b**x+c, x, y, p0=p0, bounds=bounds)
+#    print(a, b, c)
     func = lambda x_: a*b**x_+c
     return func, (a, b, c)
 
 def get_cooling_rate(tow, time_map):
     '''Calculate the cooling rate of a single tow'''
-    curve_parameters = exp_offset_regression(time_map, tow, p0=(tow[0]-tow[-1], 0.9, tow[-1]))[1]
+    # initial guesses (delta T, exponential base b and limit temperature)
+    p0 = (tow[0]-tow[-1], 0.5, tow[-1])
+    bounds = ([0,0,0], [300,1,300])  # bound the temperature delta to a realistic 0-300K, the base to 0-1 (temperature cannot become negative, nor on average increase during cooldown) and the limit temperature (cannot be negative and will be below 300C for sure)
+    _, curve_parameters = exp_offset_regression(time_map, tow, p0=p0, bounds=bounds)
     return -np.log(curve_parameters[1])
 
 def get_cooling_rates(temperature_histories, time_map):

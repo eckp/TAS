@@ -12,36 +12,6 @@ from temperature_history import get_temp_history
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 linestyles = (':', '-.', '--', '-')
 
-def final_graph(cooling_rate, n_exp):
-    '''Accepts cooling rate and tow number (0-3) to generate a graph
-    with compaction force, laser power and cooling rate combined.
-    Returns the matrix with graph data, where the compaction force is
-    held constant throughout the columns and laser power throughout rows.'''
-    
-    graph_data = np.empty((3,3))
-    n_points = len(experiment_params[:,0])
-    xgraph = []
-    comp_force = []
-
-    # Generate usable matrix for graphs
-    for i in range(int(n_points/3)):
-        xgraph.append(experiment_params[i*3,0])
-        comp_force.append(experiment_params[i,1])
-        for j in range(int(n_points/3)):
-            counter = i * 3 + j
-            #columns -> constant comp. force
-            #rows -> constant laser power
-            graph_data[i,j] = cooling_rate[counter,n_exp]
-
-    # Plot graphs
-    for k in range(int(n_points/3)):
-        ygraph = graph_data[:,k]
-        plt.plot(xgraph, ygraph, label=comp_force[k])
-
-    plt.legend()
-    plt.show()
-    return graph_data
-
 def plot_all_cr(all_cr, hlines={}):
     fig, axes = plt.subplots(3,3, figsize=(12,12))#, sharex=True, sharey=True)
     for exp_idx, (exp_cr, ax) in enumerate(zip(all_cr, axes.flatten())):
@@ -131,8 +101,3 @@ if __name__ == "__main__":
     plot_summary(means)
     plot_summary(modes)
     plot_summary(medians)
-
-
-#    print(experiment_params)
-#    graph_data = final_graph(cooling_rate, 0)
-#    print(graph_data)

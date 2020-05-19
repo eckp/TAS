@@ -93,7 +93,7 @@ if __name__ == "__main__":
                     #            plt.show()
             all_cooling_rates.append(exp_cooling_rates)
             means = [[np.mean(tow_crs) for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
-            modes = [[stats.mode(np.round(tow_crs,3), axis=None)[0] for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
+            modes = [[stats.mode(np.round(tow_crs,2), axis=None)[0] for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
             medians = [[np.median(tow_crs) for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
         if '-s' in sys.argv:
             pickle.dump((sample_range, all_cooling_rates, means, modes, medians), open('cr_cache.p', 'wb'))

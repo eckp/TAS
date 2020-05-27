@@ -53,6 +53,7 @@ def plot_summary(averaged_points, laser_x=False):
             ax.set_title(f'Cooling speed for {("outer", "inner")[tow_idx in (1,2)]} tow {tow_idx*2+1}')
             ax.set_xticks(x)
             ax.plot(x, line, label=line_label(settings[0,~x_ticks_idx]))
+            ax.fill_between(x, line*0.8, line*1.2, alpha=0.2)
             ax.legend()
     fig.tight_layout()
     plt.show()
@@ -71,7 +72,7 @@ if __name__ == "__main__":
     else:
         back = {f'Exp{i + 1}' : [generate_back(i), experiment_params[i]] for i in range(numExp)} #rear camera data
         # sample the temp history along the sample range
-        sample_range = (200, 600)  # range of indices to sample
+        sample_range = (80, 720)  # range of indices to sample
         all_cooling_rates = []
         for exp in back.values():
             exp_cooling_rates = []

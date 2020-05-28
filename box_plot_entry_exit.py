@@ -165,7 +165,7 @@ def back_arrays():
                 # Perform linear regression:
                 slope, intercept, r_value, p_value, std_err = stats.linregress(time_interval, tow_temp_interval)
                 tow_temp_slope[j][k][i] = slope # Slope of the regression line
-                tow_temp_ste[j][k][i] = std_err  # Standard error of the estimate
+                tow_temp_ste[j][k][i] = np.std( tow_temp_interval - ( slope * time_interval ) )
 
                 # In case you want to see the line for each measurement (Select and "ctrl" +  "/" to uncomment ):
                 # plt.plot(time_interval,tow_temp_interval)
@@ -183,7 +183,14 @@ def back_arrays():
             # Perform linear regression:
             slope, intercept, r_value, p_value, std_err = stats.linregress(time_interval, average_temp_back)
             exp_temp_slope[k][i] = slope # Slope of the regression line
-            exp_temp_ste[k][i] = std_err  # Standard error of the estimate
+            exp_temp_ste[k][i] = np.std( average_temp_back - ( slope * time_interval ) )
+
+            # In case you want to see this plotted (Select and "ctrl" +  "/" to uncomment ):
+            # plt.plot(time_interval, average_temp_back)
+            # plt.plot(time_interval, ( slope * time_interval + intercept ) )
+            # plt.plot(time_interval, (slope * time_interval + intercept + exp_temp_ste[k][i]))
+            # plt.plot(time_interval, (slope * time_interval + intercept - exp_temp_ste[k][i]))
+            # plt.show()
 
     print('Average temperature of each tow for each experiment:')
     print(tow_temp_avg)

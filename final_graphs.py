@@ -1,16 +1,41 @@
 '''generating the final graphs which should summarize all data'''
-import sys
-import pickle
 import numpy as np
-from scipy import stats
 from matplotlib import pyplot as plt
 from data import *
-from experiment_read import *
-from regression import get_cooling_rate
-from temperature_history import get_temp_history
+from nip_point_front import *
+from nip_point_back import *
+from cooling_rate import *
 
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 linestyles = (':', '-.', '--', '-')
+markers = ('o', '^', 's', 'v')
+
+def plot_summary(values, error_measure, x_label, x_ticks, y_label, legend_names, sharex=False, sharey=True):
+    '''Scatter points of values with error bars.
+    values is a list of p n*m matrices for p tows (for now hard-coded as 4), where the n rows contain lines of m points 
+    along which the x_label parameter varies and the legend_names parameter has a fixed value.
+    error_measure is of the same shape as values, and contains scalars denoting the variance of the averaged values'''
+    fig, axes = plt.subplots(2, 2, figsize=(10,10), sharex=sharex, sharey=sharey)
+    # set outer labels only if the axes are shared
+    if sharex:
+        for ax in axes[-1,:]:
+            ax.set_xlabel(x_label)
+    if sharey:
+        for ax in axes[:,0]:
+            ax.set_ylabel(y_label)
+    # one tow per subplot, optional reordering of tows by slicing the axes array
+    for ax, tow_values, tow_errors in zip(axes.flatten(), values, error_measure):
+        for line, errors, name, marker in zip(tow_values, tow_errors, legend_names, markers):
+            ax.errorbar(x_ticks, line, errors, ls=(0,(2,7)), lw=1, marker=marker, capsize=3, label=name)
+        # set the individual subplot labels if axes are not shared
+        if not sharex:
+            ax.set_xlabel(x_label)
+            ax.set_xticks(x_ticks)
+        if not sharey:
+            ax.set_ylabel(y_label)
+        ax.legend()
+    plt.show()
+
 
 def plot_all_cr(all_cr, hlines={}):
     fig, axes = plt.subplots(3,3, figsize=(12,12))#, sharex=True, sharey=True)
@@ -25,8 +50,8 @@ def plot_all_cr(all_cr, hlines={}):
                        [plt.Line2D([0], [0], c='k', ls=linestyle, label=name) for name, linestyle in zip(hlines, linestyles[0:len(hlines)])])
     fig.tight_layout()
     plt.show()
-
-def plot_summary(averaged_points, laser_x=False):
+    
+def old_plot_summary(averaged_points, laser_x=False):
     '''Accept list of 9 experiments with list of cooling rates of 4 tows each.
     Setting laser_x=True invert the plot in the sense that there will be 
     three lines of different force, and that the laser power will be on the x-axis.'''
@@ -53,52 +78,15 @@ def plot_summary(averaged_points, laser_x=False):
             ax.set_title(f'Cooling speed for {("outer", "inner")[tow_idx in (1,2)]} tow {tow_idx*2+1}')
             ax.set_xticks(x)
             ax.plot(x, line, label=line_label(settings[0,~x_ticks_idx]))
-            ax.fill_between(x, line*0.8, line*1.2, alpha=0.2)
+            ax.fill_between(x, line*0.8, line*1.2, alpha=0.2)  # use plt.errorbar
             ax.legend()
     fig.tight_layout()
     plt.show()
 
-def export_rates(location='cooling/cooling_rate_dump', num=1):
-    import csv
-    for exp_n, exp_rates in enumerate(all_cooling_rates):
-        with open(f'{location}{num}_exp{exp_n+1}.csv', 'w', newline='') as f:
-            writer = csv.writer(f)
-            for line in zip(*exp_rates):
-                writer.writerow(line)
 
 if __name__ == "__main__":
-    if '-o' in sys.argv:
-        sample_range, all_cooling_rates, means, modes, medians = pickle.load(open('cr_cache.p', 'rb'))
-    else:
-        back = {f'Exp{i + 1}' : [generate_back(i), experiment_params[i]] for i in range(numExp)} #rear camera data
-        # sample the temp history along the sample range
-        sample_range = (80, 720)  # range of indices to sample
-        all_cooling_rates = []
-        for exp in back.values():
-            exp_cooling_rates = []
-            for itow in range(0,8,2):  # odd tows 1 through 7
-                print(f'experiment {exp[1]}, tow nr. {itow+1}')
-                time = exp[0].time  # get the time list of this tow
-                tow_temp = exp[0].tows[itow]  # get the temperature data of this tow
-                tow_time_temps = np.array([get_temp_history(time, tow_temp, itow//2, sample_idx=sample_idx) for sample_idx in range(*sample_range)])
-                #            plt.pcolor(tow_time_temps[:,1,:].T, cmap='inferno')
-                #            plt.show()
-                #            for temp_h in tow_time_temps[:,1,:]:
-                #                plt.plot(tow_time_temps[0,0,:], temp_h)
-                #            plt.show()
-                try:
-                    tow_cooling_rates = [get_cooling_rate(temp_hist, time_map) for time_map, temp_hist  in tow_time_temps]#[sample_range[0]:sample_range[1]+1]]
-                finally:
-                    exp_cooling_rates.append(tow_cooling_rates)
-                    #            plt.plot(list(range(*sample_range)), tow_cooling_rates)
-                    #            plt.show()
-            all_cooling_rates.append(exp_cooling_rates)
-            means = [[np.mean(tow_crs) for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
-            modes = [[stats.mode(np.round(tow_crs,2), axis=None)[0] for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
-            medians = [[np.median(tow_crs) for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
-        if '-s' in sys.argv:
-            pickle.dump((sample_range, all_cooling_rates, means, modes, medians), open('cr_cache.p', 'wb'))
-    plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes, 'median':medians})
-    plot_summary(means)
-    plot_summary(modes)
-    plot_summary(medians)
+    pass
+    # plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes, 'median':medians})
+    # plot_summary(means)
+    # plot_summary(modes)
+    # plot_summary(medians)

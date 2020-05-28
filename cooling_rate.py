@@ -26,7 +26,7 @@ def write_cache_cr(cr_data=None, location='cr_cache.p'):
 # computation functions
 def calc_temp_hist(data=None, data_range=slice(0,-1)):
     if data is None:
-        data = [generate_back[i] for i in range(numExp)]
+        data = [generate_back(i) for i in range(numExp)]
     all_temp_hist = []
     for iexp, exp in enumerate(data):
         time = exp.time  # get the time list of this experiment
@@ -38,7 +38,7 @@ def calc_temp_hist(data=None, data_range=slice(0,-1)):
         all_temp_hist.append(exp_temp_hist)
     return np.array(all_temp_hist)
 
-def calc_cr(all_temp_hist=None, sample_range=slice(80, -120)):
+def calc_cr(all_temp_hist=None, sample_range=slice(180, 650)):
     '''Calculate the cooling rates per experiment per tow from the temperature data of the tows.
     data thus is an array with 9 entries containing 4 temperature series of the 4 tows.
     Return the cooling rate at all locations along a run (within the sample_range) for 4 tows for 9 experiments.

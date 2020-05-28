@@ -211,8 +211,8 @@ def back_arrays():
 
     return tow_temp_avg, tow_temp_slope, tow_temp_ste, exp_temp_avg, exp_temp_slope, exp_temp_ste  # End of function!
 
-
-# Calling functions for validity check:
-
-front_arrays()
-back_arrays()
+# only run if run directly (not imported in another script)
+if __name__ == '__main__':
+    # Calling functions for validity check:
+    front_arrays()
+    back_arrays()

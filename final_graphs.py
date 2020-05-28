@@ -53,4 +53,4 @@ if __name__ == "__main__":
     data_range, sample_range, back, all_cooling_rates, means, modes, medians = load_cached_cr()
     cr_values, _, _, cr_err = calc_stats(all_cooling_rates=all_cooling_rates)
     plot_summary(cr_values.T.reshape((4,3,3)), cr_err.T.reshape((4,3,3)), 'Compaction force $[N]$', experiment_params[::3,0],
-                 'Average temperature $[^\circ C]$', [f'Laser power = {power} W' for power in experiment_params[:3,1]])
+                 'Cooling constant $k\ [s^{-1}]$', [f'Laser power = {power} W' for power in experiment_params[:3,1]])

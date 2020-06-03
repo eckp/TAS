@@ -132,39 +132,3 @@ if __name__ == '__main__':
             write_cache_cr()
     #plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes, 'median':medians})
     plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes})
-
-
-    
-# for reference, until its functionality is fully replaced by the plot_summary function in final_graphs
-# def old_plot_summary(averaged_points, laser_x=False):
-#     '''Accept list of 9 experiments with list of cooling rates of 4 tows each.
-#     Setting laser_x=True invert the plot in the sense that there will be 
-#     three lines of different force, and that the laser power will be on the x-axis.'''
-#     fig, axes = plt.subplots(2,2, figsize=(10,10), sharex=False, sharey=True)
-#     data = np.array(averaged_points).reshape(3,3,4)
-#     experiment_parameters = np.array(experiment_params).reshape(3,3,2)
-#     for tow_idx, (tow_data, ax) in enumerate(zip(data.T, axes.flatten()[[0,2,3,1]])):
-#         if laser_x:
-#             tow_data = tow_data
-#             exp_prms = np.transpose(experiment_parameters, (1,0,2))
-#             x_ticks_idx = 0
-#             x_label = 'Laser power $[W]$'
-#             line_label = lambda force: f'{force} $N$'
-#         else:
-#             tow_data = tow_data.T
-#             exp_prms = experiment_parameters
-#             x_ticks_idx = 1
-#             x_label = 'Compaction force $[N]$'
-#             line_label = lambda power: f'{power} $W$'
-#         for settings, line in zip(exp_prms, tow_data):
-#             x = settings[:,x_ticks_idx]
-#             ax.set_xlabel(x_label)
-#             ax.set_ylabel('Cooling speed $k\ [s^{-1}]$')
-#             ax.set_title(f'Cooling speed for {("outer", "inner")[tow_idx in (1,2)]} tow {tow_idx*2+1}')
-#             ax.set_xticks(x)
-#             ax.plot(x, line, label=line_label(settings[0,~x_ticks_idx]))
-#             ax.fill_between(x, line*0.8, line*1.2, alpha=0.2)  # use plt.errorbar
-#             ax.legend()
-#     fig.tight_layout()
-#     plt.show()
-

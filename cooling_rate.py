@@ -20,9 +20,13 @@ def load_cached_cr(location='cr_cache.p'):
 
 def write_cache_cr(cr_data=None, location='cr_cache.p'):
     if cr_data is None:
-        cr_data = (data_range, sample_range, back, all_cooling_rates, means, modes, medians)
+        cr_data = (data_range, sample_range, back, all_cooling_rates, means, sse, modes, modes_rmse, medians, medians_rmse)
     pickle.dump(cr_data, open(location, 'wb'))
 
+# helper function for computing the root mean squared error
+def rmse(target, prediction):
+    return np.sqrt(np.mean((target-prediction)**2))
+    
 # computation functions
 def calc_temp_hist(data=None, data_range=slice(0,-1)):
     if data is None:
@@ -65,10 +69,12 @@ def calc_stats(all_cooling_rates=None, mode_rounding=2):
     if all_cooling_rates is None:
         all_cooling_rates = calc_cr()
     means = [[np.mean(tow_crs) for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
-    modes = [[stats.mode(np.round(tow_crs, mode_rounding), axis=None)[0] for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
-    medians = [[np.median(tow_crs) for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
     sse = [[np.std(tow_crs) for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
-    return np.array(means), np.array(sse), np.array(modes), np.array(medians)
+    modes = [[stats.mode(np.round(tow_crs, mode_rounding), axis=None)[0] for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
+    modes_rmse = [[rmse(tow_crs, tow_mode) for tow_crs, tow_mode in zip(exp_crs, exp_modes)] for exp_crs, exp_modes in zip(all_cooling_rates, modes)]
+    medians = [[np.median(tow_crs) for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
+    medians_rmse = [[rmse(tow_crs, tow_median) for tow_crs, tow_median in zip(exp_crs, exp_medians)] for exp_crs, exp_medians in zip(all_cooling_rates, medians)]
+    return np.array(means), np.array(sse), np.array(modes), np.array(modes_rmse), np.array(medians), np.array(medians_rmse)
 
 # cooling rate-related plotting functions
 def plot_pseudo_IR(all_temp_hist, tow_idx=0):
@@ -120,14 +126,14 @@ def plot_all_cr(all_cr, hlines={}):
     
 if __name__ == '__main__':
     if '-o' in sys.argv:
-        data_range, sample_range, back, all_cooling_rates, means, modes, medians = load_cached_cr()
+        data_range, sample_range, back, all_cooling_rates, means, sse, modes, modes_rmse, medians, medians_rmse = load_cached_cr()
     else:
         back = [generate_back(i) for i in range(numExp)]
         data_range = slice(0, -1)
         sample_range = slice(180, 650)
         all_temp_hist = calc_temp_hist(data=back, data_range=data_range)
         all_cooling_rates = calc_cr(all_temp_hist=all_temp_hist, sample_range=sample_range)
-        means, sse, modes, medians = calc_stats(all_cooling_rates)        
+        means, sse, modes, modes_rmse, medians, medians_rmse = calc_stats(all_cooling_rates)        
         if '-s' in sys.argv:
             write_cache_cr()
     #plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes, 'median':medians})

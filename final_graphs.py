@@ -58,7 +58,7 @@ def plot_summary(values, error_bars, x_label, x_ticks, y_label, legend_names, sh
 
 if __name__ == "__main__":
     ylabels = (*('temperature $[^\circ C]$',)*2, 'temperature difference $[^\circ C]$', 'cooling constant $k\ [s^{-1}]$')
-    cr_values, cr_err, *_ = calc_stats(all_cooling_rates=load_cached_cr()[3])
+    cr_values, cr_err = calc_stats(all_cooling_rates=load_cached_cr()[3])[2:4]  # 0:2 mean, 2:4 mode, 4:6 median
     cr_values, cr_err = cr_values.T.reshape((4,3,3)), cr_err.T.reshape((4,3,3))
     data = (front_arrays(), back_arrays(), diff_arrays(), (cr_values, cr_err))
     for ylabel, (values, err, *_) in zip(ylabels, data):

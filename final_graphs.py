@@ -34,15 +34,17 @@ def plot_summary(values, error_bars, x_label, x_ticks, y_label, legend_names, sh
         for line, errors, name, marker in zip(tow_values, tow_errors, legend_names, markers):
             ax.errorbar(x_ticks, line, errors, ls=(0,(2,7)), lw=1, marker=marker, capsize=3, label=name)
         # set the individual subplot labels if axes are not shared
-        if columns == 1 and not sharex:
+        if columns == 1 or not sharex:
             ax.set_xlabel(x_label)
             ax.set_xticks(x_ticks)
-        if rows == 1 and not sharey:
+        if rows == 1 or not sharey:
             ax.set_ylabel(y_label)
-        ax.set_title(f'Tow nr. {tow_idx*2+1}')
         handles, labels = ax.get_legend_handles_labels()
         if rows*columns == 1:  # if there is only one subplot
+            ax.set_title(f'Average of all 4 tows')
             ax.legend([h[0] for h in handles], labels)
+        else:
+            ax.set_title(f'Tow nr. {tow_idx*2+1}')
     fig.tight_layout()
     if rows*columns != 1:  # if there is more than one subplot
         fig.subplots_adjust(top=0.9)

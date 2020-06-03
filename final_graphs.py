@@ -24,7 +24,7 @@ def plot_summary(values, error_bars, x_label, x_ticks, y_label, legend_names, sh
         for ax in axes[:,0]:
             ax.set_ylabel(y_label)
     # one tow per subplot, optional reordering of tows by slicing the axes array
-    for ax, tow_values, tow_errors in zip(axes.flatten(), values, error_bars):
+    for tow_idx, (ax, tow_values, tow_errors) in enumerate(zip(axes.flatten(), values, error_bars)):
         for line, errors, name, marker in zip(tow_values, tow_errors, legend_names, markers):
             ax.errorbar(x_ticks, line, errors, ls=(0,(2,7)), lw=1, marker=marker, capsize=3, label=name)
         # set the individual subplot labels if axes are not shared
@@ -33,6 +33,7 @@ def plot_summary(values, error_bars, x_label, x_ticks, y_label, legend_names, sh
             ax.set_xticks(x_ticks)
         if not sharey:
             ax.set_ylabel(y_label)
+        ax.set_title(f'Tow nr. {tow_idx*2+1}')
         ax.legend()
     fig.tight_layout()
     plt.show()
@@ -43,14 +44,14 @@ def plot_summary(values, error_bars, x_label, x_ticks, y_label, legend_names, sh
 if __name__ == "__main__":
     # nip point summary plot
     nip_values, nip_err, *_ = front_arrays()
-    plot_summary(nip_values, nip_err, 'Compaction force $[N]$', experiment_params[::3,0],
-                 'Average temperature $[^\circ C]$', [f'Laser power = {power} W' for power in experiment_params[:3,1]])
+    plot_summary(nip_values, nip_err, 'Compaction force $[N]$', experiment_params[:3,1],
+                 'Average temperature $[^\circ C]$', [f'Laser power = {power} W' for power in experiment_params[::3,0]])
     # exit point summary plot
     exit_values, exit_err, *_ = back_arrays()
-    plot_summary(exit_values, exit_err, 'Compaction force $[N]$', experiment_params[::3,0],
-                 'Average temperature $[^\circ C]$', [f'Laser power = {power} W' for power in experiment_params[:3,1]])
+    plot_summary(exit_values, exit_err, 'Compaction force $[N]$', experiment_params[:3,1],
+                 'Average temperature $[^\circ C]$', [f'Laser power = {power} W' for power in experiment_params[::3,0]])
     # cooling rate summary plot
     data_range, sample_range, back, all_cooling_rates, means, modes, medians = load_cached_cr()
     cr_values, _, _, cr_err = calc_stats(all_cooling_rates=all_cooling_rates)
-    plot_summary(cr_values.T.reshape((4,3,3)), cr_err.T.reshape((4,3,3)), 'Compaction force $[N]$', experiment_params[::3,0],
-                 'Cooling constant $k\ [s^{-1}]$', [f'Laser power = {power} W' for power in experiment_params[:3,1]])
+    plot_summary(cr_values.T.reshape((4,3,3)), cr_err.T.reshape((4,3,3)), 'Compaction force $[N]$', experiment_params[:3,1],
+                 'Cooling constant $k\ [s^{-1}]$', [f'Laser power = {power} W' for power in experiment_params[::3,0]])

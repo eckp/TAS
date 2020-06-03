@@ -101,6 +101,10 @@ def plot_all_cr(all_cr, hlines={}):
     '''Plot the cooling rates along the entire run per tow per experiment in a 3*3 subplot.
     optionally add horizontal lines'''
     fig, axes = plt.subplots(3,3, figsize=(12,12), sharex=True, sharey=True)
+    for ax in axes[-1,:]:
+            ax.set_xlabel('Sampling point along run')
+    for ax in axes[:,0]:
+            ax.set_ylabel('Cooling constant $k\ [s^{-1}]$')
     for exp_idx, (exp_cr, ax) in enumerate(zip(all_cr, axes.flatten())):
         for tow_idx, tow_cr in enumerate(exp_cr):
             exp_params = experiment_params[exp_idx]
@@ -126,7 +130,8 @@ if __name__ == '__main__':
         means, modes, medians, sse = calc_stats(all_cooling_rates)        
         if '-s' in sys.argv:
             write_cache_cr()
-    plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes, 'median':medians})
+    #plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes, 'median':medians})
+    plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes})
 
 
     

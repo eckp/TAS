@@ -2,7 +2,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from data import experiment_params
-from box_plot_entry_exit import front_arrays, back_arrays
+from box_plot_entry_exit import front_arrays, back_arrays, diff_arrays
 from cooling_rate import load_cached_cr, calc_stats
 
 # some lists of styles to use for grouping points
@@ -34,7 +34,9 @@ def plot_summary(values, error_bars, x_label, x_ticks, y_label, legend_names, sh
         if not sharey:
             ax.set_ylabel(y_label)
         ax.set_title(f'Tow nr. {tow_idx*2+1}')
-        ax.legend()
+        handles, labels = ax.get_legend_handles_labels()
+        #ax.legend()
+    fig.legend([h[0] for h in handles], labels)  # only markers and line style, no error bars in legend
     fig.tight_layout()
     plt.show()
 
@@ -50,8 +52,12 @@ if __name__ == "__main__":
     exit_values, exit_err, *_ = back_arrays()
     plot_summary(exit_values, exit_err, 'Compaction force $[N]$', experiment_params[:3,1],
                  'Average temperature $[^\circ C]$', [f'Laser power = {power} W' for power in experiment_params[::3,0]])
+    # nip-exit difference summary plot
+    diff_values, diff_err, *_ = diff_arrays()
+    plot_summary(diff_values, diff_err, 'Compaction force $[N]$', experiment_params[:3,1],
+                 'Temperature difference $[^\circ C]$', [f'Laser power = {power} W' for power in experiment_params[::3,0]])
     # cooling rate summary plot
     data_range, sample_range, back, all_cooling_rates, means, modes, medians = load_cached_cr()
     cr_values, _, _, cr_err = calc_stats(all_cooling_rates=all_cooling_rates)
     plot_summary(cr_values.T.reshape((4,3,3)), cr_err.T.reshape((4,3,3)), 'Compaction force $[N]$', experiment_params[:3,1],
-                 'Cooling constant $k\ [s^{-1}]$', [f'Laser power = {power} W' for power in experiment_params[::3,0]])
+                 'Average cooling constant $k\ [s^{-1}]$', [f'Laser power = {power} W' for power in experiment_params[::3,0]])

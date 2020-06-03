@@ -68,7 +68,7 @@ def calc_stats(all_cooling_rates=None, mode_rounding=2):
     modes = [[stats.mode(np.round(tow_crs, mode_rounding), axis=None)[0] for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
     medians = [[np.median(tow_crs) for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
     sse = [[np.std(tow_crs) for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
-    return np.array(means), np.array(modes), np.array(medians), np.array(sse)
+    return np.array(means), np.array(sse), np.array(modes), np.array(medians)
 
 # cooling rate-related plotting functions
 def plot_pseudo_IR(all_temp_hist, tow_idx=0):
@@ -127,7 +127,7 @@ if __name__ == '__main__':
         sample_range = slice(180, 650)
         all_temp_hist = calc_temp_hist(data=back, data_range=data_range)
         all_cooling_rates = calc_cr(all_temp_hist=all_temp_hist, sample_range=sample_range)
-        means, modes, medians, sse = calc_stats(all_cooling_rates)        
+        means, sse, modes, medians = calc_stats(all_cooling_rates)        
         if '-s' in sys.argv:
             write_cache_cr()
     #plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes, 'median':medians})

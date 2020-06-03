@@ -25,7 +25,7 @@ back_exp_7 = generate_back(6)   #       1750 W  |       100  N
 back_exp_8 = generate_back(7)   #       1750 W  |       500  N
 back_exp_9 = generate_back(8)   #       1750 W  |       1000 N
 
-# Entry Temp: Generate average temperature and variance for each tow and experiment
+# Entry Temp:
 
 """
     This function creates four arrays. These are divided in two groups: 
@@ -124,11 +124,11 @@ def front_arrays():
         
         "tow_temp_avg" contains all the average temperatures per tow per experiment, "tow_temp_slope" contains
         the slope "a" of the regressed line of the form "T(t) = a*t + b", and "tow_temp_ste" contains 
-        the standard error in temperature. 
+        the standard deviation in temperature. 
         
     - Per experiment measurements
         Very similar to the previous arrays, but this time there is only one matrix per array, containing the average,
-        the slope and standard error in "exp_temp_avg", "exp_temp_slope" and "exp_temp_ste" respectively.
+        the slope and standard deviation in "exp_temp_avg", "exp_temp_slope" and "exp_temp_ste" respectively.
 
     The function returns, in the following order: tow_temp_avg, tow_temp_slope, tow_temp_ste, 
     exp_temp_avg, exp_temp_slope, exp_temp_ste
@@ -196,13 +196,13 @@ def back_arrays():
     print(tow_temp_avg)
     print('Slope of T-history regression for each tow for each experiment:')
     print(tow_temp_slope)
-    print('Standard error in temperature of each tow for each experiment:')
+    print('Standard deviation in temperature of each tow for each experiment:')
     print(tow_temp_ste)
     print('Average temperature for each experiment, combining all tows:')
     print(exp_temp_avg)
     print('Slope of T-history regression for each experiment, combining all tows:')
     print(exp_temp_slope)
-    print('Standard error in temperature for each experiment, combining all tows:')
+    print('Standard deviation in temperature for each experiment, combining all tows:')
     print(exp_temp_ste)
     print()
     print('Finished back_arrays()')
@@ -211,8 +211,119 @@ def back_arrays():
 
     return tow_temp_avg, tow_temp_slope, tow_temp_ste, exp_temp_avg, exp_temp_slope, exp_temp_ste  # End of function!
 
-# only run if run directly (not imported in another script)
-if __name__ == '__main__':
-    # Calling functions for validity check:
-    front_arrays()
-    back_arrays()
+
+# Difference between Entry and Exit Temperature:
+
+"""
+    This function creates six arrays. These are divided in two groups: 
+    - Per tow measurements
+        "tow_temp_avg", "tow_temp_slope" and "tow_temp_std" contain four 3x3 matrices. Each matrix corresponds 
+        to each tow (tows 1, 3, 5 and 7), and each matrix has three rows and columns. Each row corresponds to a 
+        power setting (1300 W, 1500 W, and 1750 W respectively), while each column corresponds to a compaction force. 
+        
+        This is how each matrix is structured:
+                [ exp1  exp2    exp3
+                  exp4  exp5    exp6
+                  exp7  exp8    exp9 ]
+        
+        "tow_temp_avg" contains all the average difference in temperatures per tow per experiment, "tow_temp_slope" 
+        contains the slope "a" of the regressed line of the form "T(t) = a*t + b", and "tow_temp_ste" contains 
+        the standard deviation in temperature difference. 
+        
+    - Per experiment measurements
+        Very similar to the previous arrays, but this time there is only one matrix per array, containing the average,
+        the slope and standard deviation in "exp_temp_avg", "exp_temp_slope" and "exp_temp_ste" respectively.
+
+    The function returns, in the following order: tow_temp_avg, tow_temp_slope, tow_temp_ste, 
+    exp_temp_avg, exp_temp_slope, exp_temp_ste
+"""
+
+
+def dif_arrays():
+    tow_temp_avg = np.zeros((4, 3, 3))
+    tow_temp_slope = np.zeros((4, 3, 3))
+    tow_temp_ste = np.zeros((4, 3, 3))
+    exp_temp_avg = np.zeros((3, 3))
+    exp_temp_slope = np.zeros((3, 3))
+    exp_temp_ste = np.zeros((3, 3))
+
+    for k in range(3):  # Corresponds to the row of the matrix, hence to the power setting
+
+        for i in range(3):  # Corresponds to the column of the matrix, hence to the compaction force setting
+
+            # First take the relevant time interval by only taking the time during which tape was being placed
+            time_interval_back = eval(
+                f'back_exp_{3 * k + (i + 1)}.time[ (back_exp_{3 * k + (i + 1)}.time >= 2.0) & '
+                f'(back_exp_{3 * k + (i + 1)}.time <= 11.0) ]')
+
+            average_temp_dif = np.zeros(len(time_interval_back))  # Initialize an array for the average of all tows
+
+            for j in range(4):  # Corresponds to tow 2 * j + 1
+
+                # Take the temperatures corresponding to the time interval
+                tow_temp_interval_back = eval(
+                    f'back_exp_{3 * k + (i + 1)}.tow{2 * j + 1}[0][ (back_exp_{3 * k + (i + 1)}.time >= 2.0) & '
+                    f'(back_exp_{3 * k + (i + 1)}.time <= 11.0) ]')
+
+                tow_temp_interval_front = eval(
+                    f'front_exp_{3 * k + (i + 1)}.tow{2 * j + 1}[ (front_exp_{3 * k + (i + 1)}.time >= 4.0) & '
+                    f'(front_exp_{3 * k + (i + 1)}.time <= 11.0) ]')
+
+                # Compute mean temperature
+                tow_temp_avg[j][k][i] = np.mean(tow_temp_interval_front) - np.mean(tow_temp_interval_back)
+                # Perform linear regression:
+                dif_curve = np.mean(tow_temp_interval_front) - tow_temp_interval_back # Difference in T
+                slope, intercept, r_value, p_value, std_err = stats.linregress(time_interval_back, dif_curve)
+                tow_temp_slope[j][k][i] = slope  # Slope of the regression line
+                tow_temp_ste[j][k][i] = np.std(dif_curve - (slope * time_interval_back)) # Standard deviation
+
+                # In case you want to see the line for each measurement (Select and "ctrl" +  "/" to uncomment ):
+                # plt.plot(time_interval_back, dif_curve)
+                # plt.show()
+
+                # Now make a temperature line for the experiment by combining the tow measurements
+
+                if i + k == 0 and j != 1:  # This excludes the bad measurements from tow 3 in exp no. 1
+                    average_temp_dif += 1 / 3 * dif_curve
+
+                elif i + k != 0:
+                    average_temp_dif += 0.25 * dif_curve
+
+            exp_temp_avg[k][i] = np.mean(average_temp_dif)  # Compute mean temperature
+            # Perform linear regression:
+            slope, intercept, r_value, p_value, std_err = stats.linregress(time_interval_back, average_temp_dif)
+            exp_temp_slope[k][i] = slope  # Slope of the regression line
+            exp_temp_ste[k][i] = np.std(average_temp_dif - (slope * time_interval_back)) # Standard deviation
+
+            # In case you want to see this plotted (Select and "ctrl" +  "/" to uncomment ):
+            plt.plot(time_interval_back, average_temp_dif)
+            plt.plot(time_interval_back, ( slope * time_interval_back + intercept ) )
+            plt.plot(time_interval_back, (slope * time_interval_back + intercept + exp_temp_ste[k][i]))
+            plt.plot(time_interval_back, (slope * time_interval_back + intercept - exp_temp_ste[k][i]))
+            plt.show()
+
+    print('Average temperature difference of each tow for each experiment:')
+    print(tow_temp_avg)
+    print('Slope of difference in T-history regression for each tow for each experiment:')
+    print(tow_temp_slope)
+    print('Standard deviation in temperature  difference of each tow for each experiment:')
+    print(tow_temp_ste)
+    print('Average temperature difference for each experiment, combining all tows:')
+    print(exp_temp_avg)
+    print('Slope of difference in T-history regression for each experiment, combining all tows:')
+    print(exp_temp_slope)
+    print('Standard deviation in temperature difference for each experiment, combining all tows:')
+    print(exp_temp_ste)
+    print()
+    print('Finished dif_arrays()')
+    print()
+    print()
+
+    return tow_temp_avg, tow_temp_slope, tow_temp_ste, exp_temp_avg, exp_temp_slope, exp_temp_ste  # End of function!
+
+
+# Calling functions for validity check:
+
+front_arrays()
+back_arrays()
+dif_arrays()

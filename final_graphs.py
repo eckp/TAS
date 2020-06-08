@@ -57,12 +57,19 @@ def plot_summary(values, error_bars, x_label, x_ticks, y_label, legend_names, sh
 
 
 if __name__ == "__main__":
+    forces = experiment_params[:3,1]
+    powers = experiment_params[::3,0]
     ylabels = (*('temperature $[^\circ C]$',)*2, 'temperature difference $[^\circ C]$', 'cooling constant $k\ [s^{-1}]$')
     cr_values, cr_err = calc_stats(all_cooling_rates=load_cached_cr()[3])[0:2]  # 0:2 mean, 2:4 mode, 4:6 median
     cr_values, cr_err = cr_values.T.reshape((4,3,3)), cr_err.T.reshape((4,3,3))
     data = (front_arrays(), back_arrays(), diff_arrays(), (cr_values, cr_err))
     for ylabel, (values, err, *_) in zip(ylabels, data):
-        plot_summary(values, err, 'Compaction force $[N]$', experiment_params[:3,1],
-                     ylabel[0].upper()+ylabel[1:], [f'Laser power = {power} W' for power in experiment_params[::3,0]])
-        plot_summary([np.mean(values, axis=0)], [np.mean(err, axis=0)], 'Compaction force $[N]$', experiment_params[:3,1],
-                     'Average '+ylabel, [f'Laser power = {power} W' for power in experiment_params[::3,0]], size=(5,5))
+        plot_summary(values, err, 'Compaction force $[N]$', forces,
+                     ylabel[0].upper()+ylabel[1:], [f'Laser power = {power} W' for power in powers])
+        plot_summary([np.mean(values, axis=0)], [np.mean(err, axis=0)], 'Compaction force $[N]$', forces,
+                     'Average '+ylabel, [f'Laser power = {power} W' for power in powers], size=(5,5))
+    # one more plot of the cooling rate with the parameters interchanged
+    plot_summary(values.transpose(0,2,1), err.transpose(0,2,1), 'Laser power $[W]$', powers,
+                 ylabel[0].upper()+ylabel[1:], [f'Compaction force = {force} N' for force in forces])
+    plot_summary([np.mean(values.transpose(0,2,1), axis=0)], [np.mean(err.transpose(0,2,1), axis=0)], 'Laser power $[W]$', powers,
+                 'Average '+ylabel, [f'Compaction force = {force} N' for force in forces], size=(5,5))

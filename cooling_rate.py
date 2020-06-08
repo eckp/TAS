@@ -172,8 +172,8 @@ if __name__ == '__main__':
         # select only the first few measurement lines, as there is a kink from line 7 onwards
         all_temp_hist = [[np.array(tow[:,:,0:6]) for tow in exp] for exp in all_temp_hist]
         all_cooling_rates = calc_cr(all_temp_hist=all_temp_hist, sample_range=sample_range)
+        means, sse, modes, modes_rmse, medians, medians_rmse = calc_stats(all_cooling_rates)
         all_substrate_temps = calc_ts(all_temp_hist=all_temp_hist, sample_range=sample_range)
-        #means, sse, modes, modes_rmse, medians, medians_rmse = calc_stats(all_cooling_rates)
         if '-s' in sys.argv:
             write_cache_cr()
     #plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes, 'median':medians})

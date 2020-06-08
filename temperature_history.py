@@ -112,39 +112,72 @@ def get_temp_history(time, tow, townum, sample_idx=400):
 def func(t, A, B, k):
     return A + B * np.exp(-k * t)
 
+
+def plot_all_cr(all_cr, hlines={}):
+    fig, axes = plt.subplots(3,3, figsize=(12,12), sharex=True, sharey=True)
+    for ax in axes[-1,:]:
+            ax.set_xlabel('Sampling point along run')
+    for ax in axes[:,0]:
+            ax.set_ylabel('Subtrate temperature$')
+    for exp_idx, (exp_cr, ax) in enumerate(zip(all_cr, axes.flatten())):
+        for tow_idx, tow_cr in enumerate(exp_cr):
+            exp_params = experiment_params[exp_idx]
+            ax.set_title(f'Experiment {exp_idx+1}: power = {exp_params[0]} W, force = {exp_params[1]} N')
+            ax.plot(list(range(sample_range.start, sample_range.start+len(tow_cr))), tow_cr, c=colors[tow_idx])
+            for line, style in zip(hlines, linestyles):
+                ax.axhline(hlines[line][exp_idx][tow_idx], c=colors[tow_idx], linestyle=style, label=line)
+    fig.legend(handles=[plt.Line2D([0], [0], c=colors[idx], label=f'tow nr. {idx*2+1}') for idx in range(tow_idx+1)] +
+                       [plt.Line2D([0], [0], c='k', ls=linestyle, label=name) for name, linestyle in zip(hlines, linestyles[0:len(hlines)])])
+    fig.tight_layout()
+    plt.show()
+
+
+
+
 # Distances between measurement lines for each tow
 line_distances = np.asarray([get_distances(back['Exp1'][0].tows[i], back['Exp1'][0].time) for i in range(numTows)])
 
 if __name__ == '__main__':
-    time = back['Exp1'][0].time
-    tow = back['Exp1'][0].tow1
+    run = False
+    if run:
+        Ts = {f'Exp{i}' : [[], [], [], []] for i in range(1, 10)}
+        for exp_num in range(1,10):
+            for tow_num in [1, 3, 5, 7]:
+                for sample_index in range(200, 600):
+                    time = back[f'Exp{exp_num}'][0].time
+                    tow = eval("back[f'Exp{exp_num}'][0].tow" + f'{tow_num}')
 
-    t, temp = get_temp_history(time, tow, 1)
-    
-    #Make initial guesses for the parameters 
-    k0 = 0.5
-    coeff = np.exp(-k0 * t[-1])
-    A = np.array([1, 1, 1, coeff]).reshape(2,2)
-    B = np.array([temp[0], temp[-1]]).reshape(2, 1)
+                    t, temp = get_temp_history(time, tow, tow_num, sample_index)
+                    
+                    #Make initial guesses for the parameters 
+                    k0 = 0.5
+                    coeff = np.exp(-k0 * t[-1])
+                    A = np.array([1, 1, 1, coeff]).reshape(2,2)
+                    B = np.array([temp[0], temp[-1]]).reshape(2, 1)
 
-    A0, B0 = np.linalg.solve(A, B)
-    A0 = float(A0)
-    B0 = float(B0)
+                    A0, B0 = np.linalg.solve(A, B)
+                    A0 = float(A0)
+                    B0 = float(B0)
 
-    #Fit exponential curve of form A + Be^(-kt) to experimental data
+                    #Fit exponential curve of form A + Be^(-kt) to experimental data
 
-    params = scipy.optimize.curve_fit(func, t, temp, p0=[A0, B0, k0])[0]
+                    try:
+                        params = scipy.optimize.curve_fit(func, t, temp, p0=[A0, B0, k0])[0]
 
-    A = params[0]
-    B = params[1]
-    k = params[2]
+                        A = params[0]
+                        B = params[1]
+                        k = params[2]
+                        
+                        a = 0
+                        if tow_num == 1: a = 0;
+                        if tow_num == 3: a = 1;
+                        if tow_num == 5: a = 2;
+                        if tow_num == 7: a = 3;
 
-    fit = func(t, A, B, k)
-
-    plt.plot(t, fit, label='fit')
-    plt.plot(t, temp, label='experimental')
-    plt.legend()
-    plt.show()
+                        Ts[f'Exp{exp_num}'][a].append(A)
+                        
+                    except:
+                        print(f'{exp_num}, {tow_num}, {sample_index}')
 
                     
 

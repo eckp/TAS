@@ -145,6 +145,21 @@ def plot_all_cr(all_cr, hlines={}):
     fig.tight_layout()
     plt.show()
 
+def plot_ts_vs_cr(cr, ts):
+    '''Plot the cooling rates versus substrate temperature'''
+    
+    fig, axes = plt.subplots(3,3, figsize=(12,12), sharex=True, sharey=True)
+    for ax in axes[-1,:]:
+            ax.set_xlabel(r'Subtrate temperature [$^\circ$ C]')
+    for ax in axes[:,0]:
+            ax.set_ylabel('Cooling constant $k\ [s^{-1}]$')
+
+    for i in range(0, 9):
+        for j in range(0, 4):
+            axes.flatten()[i].plot(ts[i][j], cr[i][j])
+    fig.tight_layout()
+    plt.show()
+
     
 if __name__ == '__main__':
     if '-o' in sys.argv:
@@ -155,11 +170,12 @@ if __name__ == '__main__':
         sample_range = slice(180, 650)
         all_temp_hist = calc_temp_hist(data=back, data_range=data_range)
         all_temp_hist = [[np.array(tow[:,:,0:6]) for tow in exp] for exp in all_temp_hist]
-        #all_cooling_rates = calc_cr(all_temp_hist=all_temp_hist, sample_range=sample_range)
+        all_cooling_rates = calc_cr(all_temp_hist=all_temp_hist, sample_range=sample_range)
         all_substrate_temps = calc_ts(all_temp_hist=all_temp_hist, sample_range=sample_range)
-        means, sse, modes, modes_rmse, medians, medians_rmse = calc_stats(all_cooling_rates)
+        #means, sse, modes, modes_rmse, medians, medians_rmse = calc_stats(all_cooling_rates)
         if '-s' in sys.argv:
             write_cache_cr()
     #plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes, 'median':medians})
     #plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes})
-    plot_all_cr(all_substrate_temps)
+    #plot_all_cr(all_substrate_temps)
+    #plot_ts_vs_cr(all_cooling_rates, all_substrate_temps)

@@ -6,7 +6,7 @@ from scipy import stats
 from matplotlib import pyplot as plt
 from data import experiment_params, numExp
 from experiment_read import generate_back
-from regression import get_cooling_rate
+from regression import get_cooling_rate, get_substrate_temp
 from temperature_history import get_temp_history
 
 # some lists of styles to use for grouping points
@@ -57,11 +57,33 @@ def calc_cr(all_temp_hist=None, sample_range=slice(180, 650)):
         for itow, tow_temp_hist in enumerate(exp_temp_hist):
             print(f'Cooling rate: experiment {iexp+1}, tow nr. {itow+1}')
             try:
-                tow_cr = [get_cooling_rate(temp_hist, time_map) for time_map, temp_hist  in tow_temp_hist[sample_range]]  # right now this slices the previously already slices temperature history
+                tow_cr = [get_cooling_rate(temp_hist, time_map) for time_map, temp_hist  in tow_temp_hist[sample_range]]  # right now this slices the previously already sliced temperature history
             finally:
                 exp_cr.append(tow_cr)
         all_cr.append(exp_cr)
     return np.array(all_cr)
+
+def calc_ts(all_temp_hist=None, sample_range=slice(180, 650)):
+    '''Calculate the substrate temperature per experiment per tow from the temperature data of the tows.
+    data thus is an array with 9 entries containing 4 temperature series of the 4 tows.
+    Return the cooling rate at all locations along a run (within the sample_range) for 4 tows for 9 experiments.
+    sample_range is a tuple specifying the range of samples along which the cooling rate will be calculated.
+    Needs to be set carefully to exclude chaotic start-up and cool-down regions, 
+    as the curve_fit might not cope with too irregular data.'''
+    if all_temp_hist is None:
+        all_temp_hist = calc_temp_hist()
+    all_ts = []
+    for iexp, exp_temp_hist in enumerate(all_temp_hist):
+        exp_ts = []
+        for itow, tow_temp_hist in enumerate(exp_temp_hist):
+            print(f'Substrate temperature: experiment {iexp+1}, tow nr. {itow+1}')
+            try:
+                tow_ts = [get_substrate_temp(temp_hist, time_map) for time_map, temp_hist  in tow_temp_hist[sample_range]]  # right now this slices the previously already sliced temperature history
+            finally:
+                exp_ts.append(tow_ts)
+        all_ts.append(exp_ts)
+    return np.array(all_ts)
+
 
 def calc_stats(all_cooling_rates=None, mode_rounding=2):
     '''Calculate the mean, mode and median cooling rate for each tow.
@@ -132,9 +154,12 @@ if __name__ == '__main__':
         data_range = slice(0, -1)
         sample_range = slice(180, 650)
         all_temp_hist = calc_temp_hist(data=back, data_range=data_range)
-        all_cooling_rates = calc_cr(all_temp_hist=all_temp_hist, sample_range=sample_range)
-        means, sse, modes, modes_rmse, medians, medians_rmse = calc_stats(all_cooling_rates)        
+        all_temp_hist = [[np.array(tow[:,:,0:6]) for tow in exp] for exp in all_temp_hist]
+        #all_cooling_rates = calc_cr(all_temp_hist=all_temp_hist, sample_range=sample_range)
+        all_substrate_temps = calc_ts(all_temp_hist=all_temp_hist, sample_range=sample_range)
+        means, sse, modes, modes_rmse, medians, medians_rmse = calc_stats(all_cooling_rates)
         if '-s' in sys.argv:
             write_cache_cr()
     #plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes, 'median':medians})
-    plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes})
+    #plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes})
+    plot_all_cr(all_substrate_temps)

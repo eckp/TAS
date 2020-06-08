@@ -15,7 +15,7 @@ def largest_factors(n):
         if n%i == 0:
             return i, n//i            
 
-def plot_summary(values, error_bars, x_label, x_ticks, y_label, legend_names, sharex=False, sharey=True, size=(8,8)):
+def plot_summary(values, error_bars, x_label, x_ticks, y_label, legend_names, sharex=False, sharey=True, size=(6.5,6.5)):
     '''Scatter points of values with error bars.
     values is a list of p n*m matrices for p tows (for now hard-coded as 4), where the n rows contain lines of m points 
     along which the x_label parameter varies and the legend_names parameter has a fixed value.
@@ -50,7 +50,7 @@ def plot_summary(values, error_bars, x_label, x_ticks, y_label, legend_names, sh
         fig.subplots_adjust(top=0.9)
         # put the legend on the top across all subplots
         fig.legend([h[0] for h in handles], labels,  # only markers and line style, no error bars in legend
-                   bbox_to_anchor=(0.05, 0.95, 0.9, 0.), loc='lower left', ncol= len(labels), mode="expand", borderaxespad=0)  
+                   bbox_to_anchor=(0.02, 0.95, 0.96, 0.), loc='lower left', ncol= len(labels), mode="expand", borderaxespad=0)  
     plt.show()
 
     
@@ -58,7 +58,7 @@ def plot_summary(values, error_bars, x_label, x_ticks, y_label, legend_names, sh
 
 if __name__ == "__main__":
     ylabels = (*('temperature $[^\circ C]$',)*2, 'temperature difference $[^\circ C]$', 'cooling constant $k\ [s^{-1}]$')
-    cr_values, cr_err = calc_stats(all_cooling_rates=load_cached_cr()[3])[2:4]  # 0:2 mean, 2:4 mode, 4:6 median
+    cr_values, cr_err = calc_stats(all_cooling_rates=load_cached_cr()[3])[0:2]  # 0:2 mean, 2:4 mode, 4:6 median
     cr_values, cr_err = cr_values.T.reshape((4,3,3)), cr_err.T.reshape((4,3,3))
     data = (front_arrays(), back_arrays(), diff_arrays(), (cr_values, cr_err))
     for ylabel, (values, err, *_) in zip(ylabels, data):

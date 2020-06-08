@@ -33,6 +33,14 @@ def get_cooling_rate(tow, time_map):
     _, curve_parameters = exp_offset_regression(time_map, tow, p0=p0, bounds=bounds)
     return -np.log(curve_parameters[1])
 
+def get_substrate_temp(tow, time_map):
+    '''Calculate the limit substrate temperature of a single tow'''
+    # initial guesses (delta T, exponential base b and limit temperature)
+    p0 = (tow[0]-tow[-1], 0.5, tow[-1])
+    bounds = ([0,0,0], [300,1,300])  # bound the temperature delta to a realistic 0-300K, the base to 0-1 (temperature cannot become negative, nor on average increase during cooldown) and the limit temperature (cannot be negative and will be below 300C for sure)
+    _, curve_parameters = exp_offset_regression(time_map, tow, p0=p0, bounds=bounds)
+    return curve_parameters[2]
+
 def get_cooling_rates(temperature_histories, time_map):
     '''Accept a list of experiments with the temperature history of a point on n tows per experiment,
     (which can be averaged or just a sample).

@@ -20,7 +20,7 @@ def load_cached_cr(location='cr_cache.p'):
 
 def write_cache_cr(cr_data=None, location='cr_cache.p'):
     if cr_data is None:
-        cr_data = (data_range, sample_range, back, all_cooling_rates, means, sse, modes, modes_rmse, medians, medians_rmse)
+        cr_data = (data_range, sample_range, back, all_cooling_rates, all_substrate_temps, means, sse, modes, modes_rmse, medians, medians_rmse)
     pickle.dump(cr_data, open(location, 'wb'))
 
 # helper function for computing the root mean squared error
@@ -156,19 +156,20 @@ def plot_ts_vs_cr(cr, ts):
 
     for i in range(0, 9):
         for j in range(0, 4):
-            axes.flatten()[i].plot(ts[i][j], cr[i][j])
+            axes.flatten()[i].scatter(ts[i][j], cr[i][j])
     fig.tight_layout()
     plt.show()
 
     
 if __name__ == '__main__':
     if '-o' in sys.argv:
-        data_range, sample_range, back, all_cooling_rates, means, sse, modes, modes_rmse, medians, medians_rmse = load_cached_cr()
+        data_range, sample_range, back, all_cooling_rates, all_substrate_temps, means, sse, modes, modes_rmse, medians, medians_rmse = load_cached_cr()
     else:
         back = [generate_back(i) for i in range(numExp)]
         data_range = slice(0, -1)
         sample_range = slice(180, 650)
         all_temp_hist = calc_temp_hist(data=back, data_range=data_range)
+        # select only the first few measurement lines, as there is a kink from line 7 onwards
         all_temp_hist = [[np.array(tow[:,:,0:6]) for tow in exp] for exp in all_temp_hist]
         all_cooling_rates = calc_cr(all_temp_hist=all_temp_hist, sample_range=sample_range)
         all_substrate_temps = calc_ts(all_temp_hist=all_temp_hist, sample_range=sample_range)
@@ -176,6 +177,6 @@ if __name__ == '__main__':
         if '-s' in sys.argv:
             write_cache_cr()
     #plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes, 'median':medians})
-    #plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes})
-    #plot_all_cr(all_substrate_temps)
-    #plot_ts_vs_cr(all_cooling_rates, all_substrate_temps)
+    plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes})
+    plot_all_cr(all_substrate_temps)
+    plot_ts_vs_cr(all_cooling_rates, all_substrate_temps)

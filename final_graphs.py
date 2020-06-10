@@ -33,6 +33,7 @@ def plot_summary(values, error_bars, x_label, x_ticks, y_label, legend_names, sh
     for tow_idx, (ax, tow_values, tow_errors) in enumerate(zip(axes.flatten(), values, error_bars)):
         for line, errors, name, marker in zip(tow_values, tow_errors, legend_names, markers):
             ax.errorbar(x_ticks, line, errors, ls=(0,(2,7)), lw=1, marker=marker, capsize=3, label=name)
+            #ax.set_xscale('log')
         # set the individual subplot labels if axes are not shared
         if columns == 1 or not sharex:
             ax.set_xlabel(x_label)
@@ -66,10 +67,10 @@ if __name__ == "__main__":
     for ylabel, (values, err, *_) in zip(ylabels, data):
         plot_summary(values, err, 'Compaction force $[N]$', forces,
                      ylabel[0].upper()+ylabel[1:], [f'Laser power = {power} W' for power in powers])
-        plot_summary([np.mean(values, axis=0)], [np.mean(err, axis=0)], 'Compaction force $[N]$', forces,
+        plot_summary([np.nanmean(values, axis=0)], [np.nanmean(err, axis=0)], 'Compaction force $[N]$', forces,
                      'Average '+ylabel, [f'Laser power = {power} W' for power in powers], size=(5,5))
     # one more plot of the cooling rate with the parameters interchanged
     plot_summary(values.transpose(0,2,1), err.transpose(0,2,1), 'Laser power $[W]$', powers,
                  ylabel[0].upper()+ylabel[1:], [f'Compaction force = {force} N' for force in forces])
-    plot_summary([np.mean(values.transpose(0,2,1), axis=0)], [np.mean(err.transpose(0,2,1), axis=0)], 'Laser power $[W]$', powers,
+    plot_summary([np.nanmean(values.transpose(0,2,1), axis=0)], [np.nanmean(err.transpose(0,2,1), axis=0)], 'Laser power $[W]$', powers,
                  'Average '+ylabel, [f'Compaction force = {force} N' for force in forces], size=(5,5))

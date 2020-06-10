@@ -90,6 +90,7 @@ def calc_stats(all_cooling_rates=None, mode_rounding=2):
     Additionally calculates the standard error, to be used for plotting 1 SE error bars around the mean data points.'''
     if all_cooling_rates is None:
         all_cooling_rates = calc_cr()
+    all_cooling_rates[0][1][0] = np.nan  # exclude tow 3 from exp 1 from the computations
     means = [[np.mean(tow_crs) for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
     sse = [[np.std(tow_crs) for tow_crs in exp_crs] for exp_crs in all_cooling_rates]
     modes = [[stats.mode(np.round(tow_crs, mode_rounding), axis=None)[0] for tow_crs in exp_crs] for exp_crs in all_cooling_rates]

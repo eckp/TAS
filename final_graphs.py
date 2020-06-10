@@ -60,7 +60,7 @@ if __name__ == "__main__":
     forces = experiment_params[:3,1]
     powers = experiment_params[::3,0]
     ylabels = (*('temperature $[^\circ C]$',)*2, 'temperature difference $[^\circ C]$', 'cooling constant $k\ [s^{-1}]$')
-    cr_values, cr_err = calc_stats(all_cooling_rates=load_cached_cr()[3])[0:2]  # 0:2 mean, 2:4 mode, 4:6 median
+    cr_values, cr_err = calc_stats(all_cooling_rates=load_cached_cr()[7])[0:2]  # 0:2 mean, 2:4 mode, 4:6 median
     cr_values, cr_err = cr_values.T.reshape((4,3,3)), cr_err.T.reshape((4,3,3))
     data = (front_arrays(), back_arrays(), diff_arrays(), (cr_values, cr_err))
     for ylabel, (values, err, *_) in zip(ylabels, data):

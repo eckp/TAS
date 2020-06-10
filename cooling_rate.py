@@ -20,7 +20,7 @@ def load_cached_cr(location='cr_cache.p'):
 
 def write_cache_cr(cr_data=None, location='cr_cache.p'):
     if cr_data is None:
-        cr_data = (back, data_range, sample_range, all_temp_hist, select_temp_hist, all_cooling_rates, select_cooling_rates, all_substrate_temps, select_substrate_temps, means, sse, modes, modes_rmse, medians, medians_rmse)
+        cr_data = (back, data_range, sample_range, all_tow_temp_hist, all_temp_hist, select_temp_hist, all_cooling_rates, select_cooling_rates, all_substrate_temps, select_substrate_temps, means, sse, modes, modes_rmse, medians, medians_rmse)
     pickle.dump(cr_data, open(location, 'wb'))
 
 # helper function for computing the root mean squared error
@@ -197,7 +197,7 @@ def plot_curve_fit_comparison(all_temp_hist, exp_idx, tow_idx, sample_idx):
     
 if __name__ == '__main__':
     if '-o' in sys.argv:
-        back, data_range, sample_range, all_temp_hist, select_temp_hist, all_cooling_rates, select_cooling_rates, all_substrate_temps, select_substrate_temps, means, sse, modes, modes_rmse, medians, medians_rmse = load_cached_cr()
+        back, data_range, sample_range, all_tow_temp_hist, all_temp_hist, select_temp_hist, all_cooling_rates, select_cooling_rates, all_substrate_temps, select_substrate_temps, means, sse, modes, modes_rmse, medians, medians_rmse = load_cached_cr()
     else:
         back = [generate_back(i) for i in range(numExp)]
         data_range = slice(0, -1)
@@ -219,3 +219,14 @@ if __name__ == '__main__':
     plot_all_cr(select_cooling_rates, hlines={'mean':means, 'mode':modes})
     plot_all_ts(select_substrate_temps)
     plot_ts_vs_cr(select_cooling_rates, select_substrate_temps)
+
+    # investigating if bad curve fits have something to do with the hot spots on the empty tows
+    e6t4_th = all_tow_temp_hist[5][3]  # temp hist of empty tow to the left of tow 5
+    e6t5_ts = select_substrate_temps[5][2]  # curve fit substrate temp of tow 5
+    e6t6_th = all_tow_temp_hist[5][5]  # temp hist of empty tow to the right of tow 5
+    fig, axes = plt.subplots(3,1, sharex=True)
+    axes[0].pcolor(e6t4_th[:,1,:].T, cmap='inferno')
+    axes[1].plot(range(180, 650), e6t5_ts)
+    axes[2].pcolor(e6t6_th[:,1,:].T, cmap='inferno')
+    fig.tight_layout()
+    plt.show()

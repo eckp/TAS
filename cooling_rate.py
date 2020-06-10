@@ -35,7 +35,7 @@ def calc_temp_hist(data=None, data_range=slice(0,-1)):
     for iexp, exp in enumerate(data):
         time = exp.time  # get the time list of this experiment
         exp_temp_hist = []
-        for itow, tow in enumerate(exp.tows[0:8:2]):  # odd tows 1 through 7 (zero-based indexing, though)
+        for itow, tow in enumerate(exp.tows):#[0:8:2]):  # odd tows 1 through 7 (zero-based indexing, though)
             print(f'Temp hist: experiment {iexp+1}, tow nr. {itow+1}')
             tow_time_temps = np.array([get_temp_history(time, tow, itow//2, sample_idx=sample_idx) for sample_idx, sample_time in enumerate(time[data_range])])
             exp_temp_hist.append(tow_time_temps)
@@ -202,7 +202,8 @@ if __name__ == '__main__':
         back = [generate_back(i) for i in range(numExp)]
         data_range = slice(0, -1)
         sample_range = slice(180, 650)
-        all_temp_hist = calc_temp_hist(data=back, data_range=data_range)
+        all_tow_temp_hist = calc_temp_hist(data=back, data_range=data_range)  # also for the inactive tows
+        all_temp_hist = all_tow_temp_hist[:,0:8:2]  # select only active tows
         # select only the first few measurement lines, as there is a kink from line 7 onwards
         select_temp_hist = [[np.array(tow[:,:,0:6]) for tow in exp] for exp in all_temp_hist]
         all_cooling_rates = calc_cr(all_temp_hist=all_temp_hist, sample_range=sample_range)
@@ -212,7 +213,9 @@ if __name__ == '__main__':
         select_substrate_temps = calc_ts(all_temp_hist=select_temp_hist, sample_range=sample_range)
         if '-s' in sys.argv:
             write_cache_cr()
-    #plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes, 'median':medians})
-    plot_all_cr(all_cooling_rates, hlines={'mean':means, 'mode':modes})
+    plot_all_cr(all_cooling_rates)
     plot_all_ts(all_substrate_temps)
     plot_ts_vs_cr(all_cooling_rates, all_substrate_temps)
+    plot_all_cr(select_cooling_rates, hlines={'mean':means, 'mode':modes})
+    plot_all_ts(select_substrate_temps)
+    plot_ts_vs_cr(select_cooling_rates, select_substrate_temps)

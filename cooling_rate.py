@@ -181,16 +181,23 @@ def plot_ts_vs_cr(cr, ts):
     fig.tight_layout()
     plt.show()
 
-def plot_curve_fit_comparison(all_temp_hist, exp_idx, tow_idx, sample_idx):
+def plot_curve_fit_comparison(all_temp_hist, exp_idx, tow_idx, sample_idx, fixed=False, extend=False):
     '''Plot the experimental data and the fitted curve for comparison.'''
     time, temp = all_temp_hist[exp_idx][tow_idx][sample_idx]
+    f_time, f_temp = time[0:6], temp[0:6]  # 'fix': only use the first 6 measurement lines
     func, params = exp_offset_regression(time, temp, p0=(temp[0]-temp[-1], 0.5, temp[-1]), bounds=([0, 0, 75], [300, 1, 200]))
+    f_func, f_params = exp_offset_regression(f_time, f_temp, p0=(f_temp[0]-f_temp[-1], 0.5, f_temp[-1]), bounds=([0, 0, 75], [300, 1, 200]))
     fig, ax = plt.subplots(figsize=(5,3.5))
     ax.set_title(f'Point {sample_idx} from tow {tow_idx*2+1}, experiment {exp_idx+1}')
     ax.set_xlabel('Time $[s]$')
     ax.set_ylabel('Temperature $[^{\circ} C]$')
-    ax.plot(time, temp, label='Temperature history')
-    ax.plot(time, func(time), label='Fitted exponential curve')
+    ax.plot(time, temp, marker=markers[0], label='Temperature history')
+    ax.plot(time, func(time), marker=markers[1], label='Exponential curve fit')
+    if fixed:
+        if extend:
+            ax.plot(time, f_func(time), marker=markers[2], markevery=[0,2,4,6,7,8,9], label='Fixed exponential curve fit')
+        else:
+            ax.plot(f_time, f_func(f_time), marker=markers[2], markevery=[0,2,4], label='Fixed exponential curve fit')
     ax.legend()
     fig.tight_layout()
     plt.show()
